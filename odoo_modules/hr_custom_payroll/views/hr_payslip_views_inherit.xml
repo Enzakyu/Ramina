@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ================================================================ -->
+    <!-- Inherit Payslip Form: Add Overtime Bonuses Tab                    -->
+    <!-- ================================================================ -->
+    <record id="hr_payslip_view_form_inherit_overtime" model="ir.ui.view">
+        <field name="name">hr.payslip.form.inherit.overtime</field>
+        <field name="model">hr.payslip</field>
+        <field name="inherit_id" ref="hr_payroll.view_hr_payslip_form"/>
+        <field name="arch" type="xml">
+            <!-- Add Overtime Bonuses tab to the payslip notebook -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Overtime Bonuses" name="overtime_bonuses">
+                    <group>
+                        <group>
+                            <field name="total_overtime_bonus" widget="monetary"/>
+                            <field name="overtime_bonus_count"/>
+                        </group>
+                    </group>
+                    <field name="overtime_bonus_ids" readonly="1">
+                        <tree string="Linked Overtime Bonuses"
+                              decoration-info="state == 'draft'"
+                              decoration-success="state == 'confirmed'"
+                              decoration-muted="state == 'paid'">
+                            <field name="date"/>
+                            <field name="check_in"/>
+                            <field name="check_out"/>
+                            <field name="worked_hours" widget="float_time"/>
+                            <field name="overtime_hours" widget="float_time"/>
+                            <field name="overtime_rate"/>
+                            <field name="bonus_amount"/>
+                            <field name="currency_id" column_invisible="1"/>
+                            <field name="state" widget="badge"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

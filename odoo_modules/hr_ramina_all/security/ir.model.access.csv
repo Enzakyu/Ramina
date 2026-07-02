@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_employee_ramina_employee,hr.employee.ramina.employee,hr.model_hr_employee,hr_ramina_all.ramina_group_employee,1,0,0,0
+access_hr_employee_ramina_admin,hr.employee.ramina.admin,hr.model_hr_employee,hr_ramina_all.ramina_group_hr_admin,1,1,1,1
+access_hr_attendance_ramina_employee,hr.attendance.ramina.employee,hr_attendance.model_hr_attendance,hr_ramina_all.ramina_group_employee,1,1,1,0
+access_hr_attendance_ramina_admin,hr.attendance.ramina.admin,hr_attendance.model_hr_attendance,hr_ramina_all.ramina_group_hr_admin,1,1,1,1
+access_hr_overtime_bonus_ramina_employee,hr.overtime.bonus.ramina.employee,hr_custom_payroll.model_hr_overtime_bonus,hr_ramina_all.ramina_group_employee,1,0,0,0
+access_hr_overtime_bonus_ramina_admin,hr.overtime.bonus.ramina.admin,hr_custom_payroll.model_hr_overtime_bonus,hr_ramina_all.ramina_group_hr_admin,1,1,1,1

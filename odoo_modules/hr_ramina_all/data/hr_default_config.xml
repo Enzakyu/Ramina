@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================================ -->
+        <!-- Resource Calendar: Ramina Standard Mon-Fri 9AM-5PM            -->
+        <!-- Timezone: Asia/Jakarta (WIB - Western Indonesia Time)         -->
+        <!-- ============================================================ -->
+        <record id="resource_calendar_ramina_standard" model="resource.calendar">
+            <field name="name">Ramina Standard: Mon-Fri 9AM-5PM</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="hours_per_week">40</field>
+            <field name="tz">Asia/Jakarta</field>
+            <field name="attendance_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'name': 'Monday Morning',    'dayofweek': '0', 'hour_from': 9.0,  'hour_to': 12.0, 'day_period': 'morning'}),
+                (0, 0, {'name': 'Monday Afternoon',   'dayofweek': '0', 'hour_from': 13.0, 'hour_to': 17.0, 'day_period': 'afternoon'}),
+                (0, 0, {'name': 'Tuesday Morning',    'dayofweek': '1', 'hour_from': 9.0,  'hour_to': 12.0, 'day_period': 'morning'}),
+                (0, 0, {'name': 'Tuesday Afternoon',  'dayofweek': '1', 'hour_from': 13.0, 'hour_to': 17.0, 'day_period': 'afternoon'}),
+                (0, 0, {'name': 'Wednesday Morning',  'dayofweek': '2', 'hour_from': 9.0,  'hour_to': 12.0, 'day_period': 'morning'}),
+                (0, 0, {'name': 'Wednesday Afternoon', 'dayofweek': '2', 'hour_from': 13.0, 'hour_to': 17.0, 'day_period': 'afternoon'}),
+                (0, 0, {'name': 'Thursday Morning',   'dayofweek': '3', 'hour_from': 9.0,  'hour_to': 12.0, 'day_period': 'morning'}),
+                (0, 0, {'name': 'Thursday Afternoon',  'dayofweek': '3', 'hour_from': 13.0, 'hour_to': 17.0, 'day_period': 'afternoon'}),
+                (0, 0, {'name': 'Friday Morning',     'dayofweek': '4', 'hour_from': 9.0,  'hour_to': 12.0, 'day_period': 'morning'}),
+                (0, 0, {'name': 'Friday Afternoon',    'dayofweek': '4', 'hour_from': 13.0, 'hour_to': 17.0, 'day_period': 'afternoon'}),
+            ]"/>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- Default Leave Types                                           -->
+        <!-- ============================================================ -->
+
+        <!-- Annual Leave: 20 days per year -->
+        <record id="hr_leave_type_annual" model="hr.leave.type">
+            <field name="name">Annual Leave</field>
+            <field name="requires_allocation">yes</field>
+            <field name="employee_requests">yes</field>
+            <field name="allocation_validation_type">hr</field>
+            <field name="leave_validation_type">hr</field>
+            <field name="color">4</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="responsible_ids" eval="[(4, ref('base.user_admin'))]"/>
+        </record>
+
+        <!-- Sick Leave: 12 days per year -->
+        <record id="hr_leave_type_sick" model="hr.leave.type">
+            <field name="name">Sick Leave</field>
+            <field name="requires_allocation">yes</field>
+            <field name="employee_requests">yes</field>
+            <field name="allocation_validation_type">hr</field>
+            <field name="leave_validation_type">hr</field>
+            <field name="color">2</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="responsible_ids" eval="[(4, ref('base.user_admin'))]"/>
+        </record>
+
+        <!-- Personal Leave: 5 days per year -->
+        <record id="hr_leave_type_personal" model="hr.leave.type">
+            <field name="name">Personal Leave</field>
+            <field name="requires_allocation">yes</field>
+            <field name="employee_requests">yes</field>
+            <field name="allocation_validation_type">hr</field>
+            <field name="leave_validation_type">hr</field>
+            <field name="color">7</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="responsible_ids" eval="[(4, ref('base.user_admin'))]"/>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- Default Leave Allocations                                     -->
+        <!-- (Created as templates - actual allocations per employee        -->
+        <!--  should be managed via allocation requests)                    -->
+        <!-- ============================================================ -->
+
+        <!-- Note: In production, leave allocations should be created      -->
+        <!-- per-employee via HR > Time Off > Allocations.                 -->
+        <!-- The leave types above define the allowed categories.          -->
+
+    </data>
+</odoo>

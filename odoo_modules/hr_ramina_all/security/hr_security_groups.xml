@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================================ -->
+        <!-- Category: Ramina HR                                           -->
+        <!-- ============================================================ -->
+        <record id="module_category_ramina_hr" model="ir.module.category">
+            <field name="name">Ramina HR</field>
+            <field name="description">Ramina HR Management Security Groups</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- Group: Ramina Employee                                        -->
+        <!-- Basic employee access - inherits base.group_user              -->
+        <!-- ============================================================ -->
+        <record id="ramina_group_employee" model="res.groups">
+            <field name="name">Ramina Employee</field>
+            <field name="comment">
+                Basic Ramina employee group. Members can:
+                - View their own employee profile
+                - Check in/out attendance
+                - View their own overtime records
+                - Request time off
+            </field>
+            <field name="category_id" ref="module_category_ramina_hr"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- Group: Ramina HR Administrator                                -->
+        <!-- Full HR admin access - inherits hr.group_hr_manager           -->
+        <!-- ============================================================ -->
+        <record id="ramina_group_hr_admin" model="res.groups">
+            <field name="name">Ramina HR Administrator</field>
+            <field name="comment">
+                Ramina HR Administrator group. Members can:
+                - Manage all employees
+                - Manage all attendance records
+                - Approve/reject time off requests
+                - Manage payroll and payslips
+                - Confirm and manage overtime bonuses
+                - Full access to all HR data
+            </field>
+            <field name="category_id" ref="module_category_ramina_hr"/>
+            <field name="implied_ids" eval="[(4, ref('hr.group_hr_manager'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- Record Rules: Employee Self-Service                           -->
+        <!-- ============================================================ -->
+
+        <!-- Rule: Employees can only read their own hr.employee record -->
+        <record id="hr_employee_rule_ramina_employee_self" model="ir.rule">
+            <field name="name">Ramina Employee: Own Employee Record</field>
+            <field name="model_id" ref="hr.model_hr_employee"/>
+            <field name="domain_force">[('user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('ramina_group_employee'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Rule: Employees can only see their own attendance records -->
+        <record id="hr_attendance_rule_ramina_employee_self" model="ir.rule">
+            <field name="name">Ramina Employee: Own Attendance Records</field>
+            <field name="model_id" ref="hr_attendance.model_hr_attendance"/>
+            <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('ramina_group_employee'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Rule: Employees can only see their own overtime bonus records -->
+        <record id="hr_overtime_bonus_rule_ramina_employee_self" model="ir.rule">
+            <field name="name">Ramina Employee: Own Overtime Bonuses</field>
+            <field name="model_id" ref="hr_custom_payroll.model_hr_overtime_bonus"/>
+            <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('ramina_group_employee'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Rule: HR Admins can see all employee records (global) -->
+        <record id="hr_employee_rule_ramina_admin_global" model="ir.rule">
+            <field name="name">Ramina HR Admin: All Employee Records</field>
+            <field name="model_id" ref="hr.model_hr_employee"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('ramina_group_hr_admin'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- Rule: HR Admins can see all attendance records (global) -->
+        <record id="hr_attendance_rule_ramina_admin_global" model="ir.rule">
+            <field name="name">Ramina HR Admin: All Attendance Records</field>
+            <field name="model_id" ref="hr_attendance.model_hr_attendance"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('ramina_group_hr_admin'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- Rule: HR Admins can see all overtime bonus records (global) -->
+        <record id="hr_overtime_bonus_rule_ramina_admin_global" model="ir.rule">
+            <field name="name">Ramina HR Admin: All Overtime Bonuses</field>
+            <field name="model_id" ref="hr_custom_payroll.model_hr_overtime_bonus"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('ramina_group_hr_admin'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

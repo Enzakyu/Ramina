@@ -1,0 +1,20 @@
+{
+    'name': 'Ramina Custom Payroll',
+    'version': '19.0.1.0.0',
+    'category': 'Human Resources/Payroll',
+    'summary': 'Automatic overtime detection and bonus calculation for Ramina',
+    'description': 'Extends HR Payroll with automatic overtime tracking based on 9-5 work schedule and bonus salary rules.',
+    'author': 'Ramina',
+    'license': 'LGPL-3',
+    'depends': ['hr', 'hr_attendance', 'hr_payroll', 'hr_contract'],
+    'data': [
+        'security/ir.model.access.csv',
+        'data/hr_salary_rule_data.xml',
+        'data/hr_overtime_cron.xml',
+        'views/hr_overtime_bonus_views.xml',
+        'views/hr_payslip_views_inherit.xml',
+    ],
+    'installable': True,
+    'application': False,
+    'auto_install': False,
+}

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================================ -->
+        <!-- Cron Job: Daily Overtime Computation                          -->
+        <!-- Runs daily at 1:00 AM to scan yesterday's attendance          -->
+        <!-- and generate overtime bonus records automatically             -->
+        <!-- ============================================================ -->
+        <record id="ir_cron_compute_overtime" model="ir.cron">
+            <field name="name">Ramina: Compute Daily Overtime</field>
+            <field name="model_id" ref="model_hr_overtime_bonus"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_compute_overtime()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="priority">15</field>
+        </record>
+
+    </data>
+</odoo>

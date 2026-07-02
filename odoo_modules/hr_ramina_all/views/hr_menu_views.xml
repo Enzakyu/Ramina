@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ================================================================ -->
+    <!-- Top-Level Menu: Ramina HR                                         -->
+    <!-- ================================================================ -->
+    <menuitem id="menu_ramina_hr_root"
+              name="Ramina HR"
+              web_icon="hr_ramina_all,static/description/icon.png"
+              sequence="5"/>
+
+    <!-- ================================================================ -->
+    <!-- Window Actions                                                    -->
+    <!-- (Define actions for sub-menus that need custom configuration)     -->
+    <!-- ================================================================ -->
+
+    <!-- Action: Employees List -->
+    <record id="action_ramina_employees" model="ir.actions.act_window">
+        <field name="name">Employees</field>
+        <field name="res_model">hr.employee</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new employee
+            </p>
+            <p>
+                Manage Ramina employee profiles, contracts, and work information.
+            </p>
+        </field>
+    </record>
+
+    <!-- Action: Attendance -->
+    <record id="action_ramina_attendance" model="ir.actions.act_window">
+        <field name="name">Attendances</field>
+        <field name="res_model">hr.attendance</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No attendance records yet
+            </p>
+            <p>
+                Track employee check-in and check-out times.
+                Standard schedule: 9:00 AM - 5:00 PM (8 hours/day).
+            </p>
+        </field>
+    </record>
+
+    <!-- Action: Time Off (Leave Requests) -->
+    <record id="action_ramina_time_off" model="ir.actions.act_window">
+        <field name="name">Time Off</field>
+        <field name="res_model">hr.leave</field>
+        <field name="view_mode">tree,form,calendar</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No time off requests
+            </p>
+            <p>
+                Manage employee leave requests: Annual (20 days), Sick (12 days), Personal (5 days).
+            </p>
+        </field>
+    </record>
+
+    <!-- Action: Payslips -->
+    <record id="action_ramina_payslips" model="ir.actions.act_window">
+        <field name="name">Payslips</field>
+        <field name="res_model">hr.payslip</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new payslip
+            </p>
+            <p>
+                Process employee payroll with automatic overtime bonus calculation.
+                Currency: IDR (Indonesian Rupiah).
+            </p>
+        </field>
+    </record>
+
+    <!-- ================================================================ -->
+    <!-- Sub-Menus under Ramina HR                                         -->
+    <!-- ================================================================ -->
+
+    <!-- Employees -->
+    <menuitem id="menu_ramina_employees"
+              name="Employees"
+              parent="menu_ramina_hr_root"
+              action="action_ramina_employees"
+              sequence="10"/>
+
+    <!-- Attendance -->
+    <menuitem id="menu_ramina_attendance"
+              name="Attendance"
+              parent="menu_ramina_hr_root"
+              action="action_ramina_attendance"
+              sequence="20"/>
+
+    <!-- Time Off -->
+    <menuitem id="menu_ramina_time_off"
+              name="Time Off"
+              parent="menu_ramina_hr_root"
+              action="action_ramina_time_off"
+              sequence="30"/>
+
+    <!-- Payroll -->
+    <menuitem id="menu_ramina_payroll"
+              name="Payroll"
+              parent="menu_ramina_hr_root"
+              action="action_ramina_payslips"
+              sequence="40"/>
+
+    <!-- Overtime (links to hr_custom_payroll's action) -->
+    <menuitem id="menu_ramina_overtime"
+              name="Overtime"
+              parent="menu_ramina_hr_root"
+              action="hr_custom_payroll.hr_overtime_bonus_action"
+              sequence="50"/>
+
+</odoo>

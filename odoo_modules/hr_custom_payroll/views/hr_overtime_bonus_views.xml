@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ================================================================ -->
+    <!-- Overtime Bonus: Tree View                                         -->
+    <!-- ================================================================ -->
+    <record id="hr_overtime_bonus_view_tree" model="ir.ui.view">
+        <field name="name">hr.overtime.bonus.tree</field>
+        <field name="model">hr.overtime.bonus</field>
+        <field name="arch" type="xml">
+            <tree string="Overtime Bonuses"
+                  decoration-info="state == 'draft'"
+                  decoration-success="state == 'confirmed'"
+                  decoration-muted="state == 'paid'">
+                <field name="employee_id"/>
+                <field name="date"/>
+                <field name="check_in"/>
+                <field name="check_out"/>
+                <field name="worked_hours" widget="float_time"/>
+                <field name="standard_hours" widget="float_time"/>
+                <field name="overtime_hours" widget="float_time" sum="Total Overtime"/>
+                <field name="overtime_rate"/>
+                <field name="bonus_amount" sum="Total Bonus"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-success="state == 'confirmed'"
+                       decoration-warning="state == 'paid'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ================================================================ -->
+    <!-- Overtime Bonus: Form View                                         -->
+    <!-- ================================================================ -->
+    <record id="hr_overtime_bonus_view_form" model="ir.ui.view">
+        <field name="name">hr.overtime.bonus.form</field>
+        <field name="model">hr.overtime.bonus</field>
+        <field name="arch" type="xml">
+            <form string="Overtime Bonus">
+                <header>
+                    <button name="action_confirm"
+                            string="Confirm"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_set_draft"
+                            string="Set to Draft"
+                            type="object"
+                            invisible="state != 'confirmed'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,confirmed,paid"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="employee_id" placeholder="Select Employee..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Attendance Details">
+                            <field name="date"/>
+                            <field name="check_in"/>
+                            <field name="check_out"/>
+                            <field name="attendance_id"/>
+                        </group>
+                        <group string="Overtime Calculation">
+                            <field name="worked_hours" widget="float_time"/>
+                            <field name="standard_hours" widget="float_time"/>
+                            <field name="overtime_hours" widget="float_time"/>
+                            <field name="overtime_rate"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Financial">
+                            <field name="bonus_amount" widget="monetary"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="payslip_id"/>
+                        </group>
+                        <group string="Company">
+                            <field name="company_id"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ================================================================ -->
+    <!-- Overtime Bonus: Search View                                        -->
+    <!-- ================================================================ -->
+    <record id="hr_overtime_bonus_view_search" model="ir.ui.view">
+        <field name="name">hr.overtime.bonus.search</field>
+        <field name="model">hr.overtime.bonus</field>
+        <field name="arch" type="xml">
+            <search string="Search Overtime Bonuses">
+                <field name="employee_id"/>
+                <field name="date"/>
+                <field name="state"/>
+                <separator/>
+                <filter name="filter_draft" string="Draft"
+                        domain="[('state', '=', 'draft')]"/>
+                <filter name="filter_confirmed" string="Confirmed"
+                        domain="[('state', '=', 'confirmed')]"/>
+                <filter name="filter_paid" string="Paid"
+                        domain="[('state', '=', 'paid')]"/>
+                <separator/>
+                <filter name="filter_current_month" string="Current Month"
+                        domain="[('date', '&gt;=', (context_today()).strftime('%%Y-%%m-01'))]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter name="group_employee" string="Employee"
+                            context="{'group_by': 'employee_id'}"/>
+                    <filter name="group_date" string="Date"
+                            context="{'group_by': 'date'}"/>
+                    <filter name="group_month" string="Month"
+                            context="{'group_by': 'date:month'}"/>
+                    <filter name="group_state" string="Status"
+                            context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ================================================================ -->
+    <!-- Overtime Bonus: Action                                            -->
+    <!-- ================================================================ -->
+    <record id="hr_overtime_bonus_action" model="ir.actions.act_window">
+        <field name="name">Overtime Bonuses</field>
+        <field name="res_model">hr.overtime.bonus</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="hr_overtime_bonus_view_search"/>
+        <field name="context">{'search_default_filter_current_month': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No overtime bonuses found
+            </p>
+            <p>
+                Overtime records are automatically created daily from attendance data.
+                Employees who work beyond the standard 8-hour schedule (9 AM - 5 PM)
+                will have overtime records generated and bonus amounts calculated.
+            </p>
+        </field>
+    </record>
+
+    <!-- ================================================================ -->
+    <!-- Menu Items                                                        -->
+    <!-- ================================================================ -->
+    <menuitem id="menu_hr_overtime_bonus_root"
+              name="Overtime"
+              parent="hr_payroll.menu_hr_payroll_root"
+              sequence="40"/>
+
+    <menuitem id="menu_hr_overtime_bonus_list"
+              name="Overtime Bonuses"
+              parent="menu_hr_overtime_bonus_root"
+              action="hr_overtime_bonus_action"
+              sequence="10"/>
+
+</odoo>
