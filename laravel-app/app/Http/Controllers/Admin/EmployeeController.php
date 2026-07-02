@@ -20,7 +20,7 @@ class EmployeeController extends Controller
      *   - limit  (default 20)
      *   - offset (default 0)
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request)
     {
         try {
             $limit = (int) $request->query('limit', 20);
@@ -28,19 +28,11 @@ class EmployeeController extends Controller
 
             $employees = $this->employeeService->getAllEmployees($limit, $offset);
 
-            return response()->json([
-                'success' => true,
-                'data'    => $employees,
-                'meta'    => [
-                    'limit'  => $limit,
-                    'offset' => $offset,
-                ],
+            return view('admin.employees.index', [
+                'employees' => $employees,
             ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to fetch employees: ' . $e->getMessage(),
-            ], 500);
+            return back()->with('error', 'Failed to fetch employees: ' . $e->getMessage());
         }
     }
 
@@ -74,7 +66,7 @@ class EmployeeController extends Controller
     /**
      * Create a new employee record in Odoo.
      */
-    public function store(Request $request): JsonResponse
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'name'          => 'required|string|max:255',
@@ -92,16 +84,9 @@ class EmployeeController extends Controller
         try {
             $result = $this->employeeService->createEmployee($validated);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Employee created successfully.',
-                'data'    => $result,
-            ], 201);
+            return back()->with('success', 'Employee created successfully.');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to create employee: ' . $e->getMessage(),
-            ], 500);
+            return back()->with('error', 'Failed to create employee: ' . $e->getMessage());
         }
     }
 

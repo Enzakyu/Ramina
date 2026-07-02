@@ -20,50 +20,20 @@ class OvertimeController extends Controller
      *   - date_from (Y-m-d)
      *   - date_to   (Y-m-d)
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request)
     {
         $employeeId = $request->session()->get('employee_id');
 
         if (!$employeeId) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Employee record not found in session.',
-            ], 404);
+            return redirect()->route('login.form')->with('error', 'Employee record not found in session.');
         }
 
         try {
             $dateFrom = $request->query('date_from');
             $dateTo = $request->query('date_to');
-
+            
             $records = $this->overtimeService->getOvertimeRecords($employeeId, $dateFrom, $dateTo);
-
-            return response()->json([
-                'success' => true,
-                'data'    => $records,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to fetch overtime records: ' . $e->getMessage(),
-            ], 500);
-        }
-    }
-
-    /**
-     * Get overtime summary for the current month.
-     */
-    public function summary(Request $request): JsonResponse
-    {
-        $employeeId = $request->session()->get('employee_id');
-
-        if (!$employeeId) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Employee record not found in session.',
-            ], 404);
-        }
-
-        try {
+            
             $now = now();
             $summary = $this->overtimeService->getOvertimeSummary(
                 $employeeId,
@@ -71,15 +41,12 @@ class OvertimeController extends Controller
                 $now->endOfMonth()->toDateString()
             );
 
-            return response()->json([
-                'success' => true,
-                'data'    => $summary,
+            return view('employee.overtime', [
+                'records' => $records,
+                'summary' => $summary,
             ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to fetch overtime summary: ' . $e->getMessage(),
-            ], 500);
+            return back()->with('error', 'Failed to fetch overtime records: ' . $e->getMessage());
         }
     }
 }

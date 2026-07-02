@@ -16,13 +16,26 @@ class LoginController extends Controller
     ) {}
 
     /**
+     * Show the login form.
+     */
+    public function showLoginForm()
+    {
+        if (request()->session()->has('odoo_uid')) {
+            return request()->session()->get('is_admin') 
+                ? redirect()->route('admin.dashboard') 
+                : redirect()->route('employee.dashboard');
+        }
+        return view('auth.login');
+    }
+
+    /**
      * Authenticate user against Odoo via JSON-RPC.
      *
      * Validates email and password, authenticates with Odoo, retrieves the
      * employee record, checks for HR Manager group membership, and stores
      * all relevant data in the session.
      */
-    public function login(Request $request): JsonResponse
+    public function login(Request $request)
     {
         $validated = $request->validate([
             'email'    => 'required|email',
@@ -37,10 +50,7 @@ class LoginController extends Controller
             );
 
             if (!$authResult || empty($authResult['uid'])) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Invalid email or password.',
-                ], 401);
+                return back()->with('error', 'Invalid email or password.');
             }
 
             $uid = $authResult['uid'];
@@ -70,51 +80,22 @@ class LoginController extends Controller
 
             $request->session()->save();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Login successful.',
-                'data'    => [
-                    'uid'         => $uid,
-                    'user_name'   => $userName,
-                    'employee_id' => $employeeId,
-                    'is_admin'    => $isAdmin,
-                ],
-            ]);
+            if ($isAdmin) {
+                return redirect()->route('admin.dashboard')->with('success', 'Welcome, Admin!');
+            }
+            return redirect()->route('employee.dashboard')->with('success', 'Welcome back!');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Authentication failed: ' . $e->getMessage(),
-            ], 500);
+            return back()->with('error', 'Authentication failed: ' . $e->getMessage());
         }
     }
 
     /**
      * Flush the session and log the user out.
      */
-    public function logout(Request $request): JsonResponse
+    public function logout(Request $request)
     {
         $request->session()->flush();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Logged out successfully.',
-        ]);
-    }
-
-    /**
-     * Return the currently authenticated user's session data.
-     */
-    public function me(Request $request): JsonResponse
-    {
-        return response()->json([
-            'success' => true,
-            'data'    => [
-                'uid'         => $request->session()->get('odoo_uid'),
-                'user_name'   => $request->session()->get('user_name'),
-                'employee_id' => $request->session()->get('employee_id'),
-                'is_admin'    => $request->session()->get('is_admin', false),
-            ],
-        ]);
+        return redirect()->route('login.form')->with('success', 'Logged out successfully.');
     }
 
     /**

@@ -25,10 +25,7 @@ class OdooAuth
         $uid = $request->session()->get('odoo_uid');
 
         if (!$sessionId || !$uid) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthenticated. Please log in.',
-            ], 401);
+            return redirect()->route('login.form')->with('error', 'Unauthenticated. Please log in.');
         }
 
         // Resolve OdooService from the container and restore session state

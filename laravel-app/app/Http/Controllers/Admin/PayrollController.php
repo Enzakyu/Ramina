@@ -20,13 +20,12 @@ class PayrollController extends Controller
      *   - month (1-12)
      *   - year  (e.g. 2026)
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request)
     {
         try {
             $month = $request->query('month');
             $year = $request->query('year');
 
-            // Build date filters from month/year if provided
             $dateFrom = null;
             $dateTo = null;
 
@@ -40,15 +39,11 @@ class PayrollController extends Controller
 
             $payslips = $this->payrollService->getAllPayslips($dateFrom, $dateTo);
 
-            return response()->json([
-                'success' => true,
-                'data'    => $payslips,
+            return view('admin.payroll', [
+                'payslips' => $payslips,
             ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to fetch payslips: ' . $e->getMessage(),
-            ], 500);
+            return back()->with('error', 'Failed to fetch payslips: ' . $e->getMessage());
         }
     }
 
@@ -57,7 +52,7 @@ class PayrollController extends Controller
      *
      * Required fields: employee_ids (array of int), date_from, date_to
      */
-    public function generate(Request $request): JsonResponse
+    public function generate(Request $request)
     {
         $validated = $request->validate([
             'employee_ids'   => 'required|array|min:1',
@@ -73,64 +68,43 @@ class PayrollController extends Controller
                 $validated['date_to']
             );
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Payslips generated successfully.',
-                'data'    => $result,
-            ], 201);
+            return back()->with('success', 'Payslips generated successfully.');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to generate payslips: ' . $e->getMessage(),
-            ], 500);
+            return back()->with('error', 'Failed to generate payslips: ' . $e->getMessage());
         }
     }
 
     /**
      * Confirm/finalize a draft payslip.
      */
-    public function confirm(int $id): JsonResponse
+    public function confirm(int $id)
     {
         try {
             $result = $this->payrollService->confirmPayslip($id);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Payslip confirmed successfully.',
-                'data'    => $result,
-            ]);
+            return back()->with('success', 'Payslip confirmed successfully.');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to confirm payslip: ' . $e->getMessage(),
-            ], 500);
+            return back()->with('error', 'Failed to confirm payslip: ' . $e->getMessage());
         }
     }
 
     /**
      * Get detailed payslip information including salary lines.
      */
-    public function show(int $id): JsonResponse
+    public function show(int $id)
     {
         try {
             $payslip = $this->payrollService->getPayslipDetail($id);
 
             if (!$payslip) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Payslip not found.',
-                ], 404);
+                return redirect()->route('admin.payroll')->with('error', 'Payslip not found.');
             }
 
-            return response()->json([
-                'success' => true,
-                'data'    => $payslip,
+            return view('admin.payroll-detail', [
+                'payslip' => $payslip,
             ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to fetch payslip detail: ' . $e->getMessage(),
-            ], 500);
+            return back()->with('error', 'Failed to fetch payslip detail: ' . $e->getMessage());
         }
     }
 }

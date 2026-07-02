@@ -20,59 +20,40 @@ class PayslipController extends Controller
      *   - date_from (Y-m-d)
      *   - date_to   (Y-m-d)
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request)
     {
         $employeeId = $request->session()->get('employee_id');
 
         if (!$employeeId) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Employee record not found in session.',
-            ], 404);
+            return redirect()->route('login.form')->with('error', 'Employee record not found in session.');
         }
 
         try {
             $dateFrom = $request->query('date_from');
             $dateTo = $request->query('date_to');
-
             $payslips = $this->payrollService->getPayslips($employeeId, $dateFrom, $dateTo);
 
-            return response()->json([
-                'success' => true,
-                'data'    => $payslips,
-            ]);
+            return view('employee.payslips', ['payslips' => $payslips]);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to fetch payslips: ' . $e->getMessage(),
-            ], 500);
+            return back()->with('error', 'Failed to fetch payslips: ' . $e->getMessage());
         }
     }
 
     /**
      * Get detailed payslip information including salary lines.
      */
-    public function show(int $id): JsonResponse
+    public function show(int $id)
     {
         try {
             $payslip = $this->payrollService->getPayslipDetail($id);
 
             if (!$payslip) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Payslip not found.',
-                ], 404);
+                return redirect()->route('employee.payslips')->with('error', 'Payslip not found.');
             }
 
-            return response()->json([
-                'success' => true,
-                'data'    => $payslip,
-            ]);
+            return view('employee.payslip-detail', ['payslip' => $payslip]);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to fetch payslip detail: ' . $e->getMessage(),
-            ], 500);
+            return back()->with('error', 'Failed to fetch payslip detail: ' . $e->getMessage());
         }
     }
 }

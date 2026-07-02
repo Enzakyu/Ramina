@@ -9,7 +9,7 @@
 </head>
 <body class="app-layout">
     
-    @auth
+    @if(session()->has('odoo_uid'))
     <!-- Sidebar -->
     <aside class="sidebar">
         <div class="sidebar-header">
@@ -74,15 +74,15 @@
             </form>
         </div>
     </aside>
-    @endauth
+    @endif
 
-    <main class="main-content" style="{{ !auth()->check() ? 'margin-left:0;' : '' }}">
-        @auth
+    <main class="main-content" style="{{ !session()->has('odoo_uid') ? 'margin-left:0;' : '' }}">
+    @if(session()->has('odoo_uid'))
         <header class="top-bar">
             <div class="page-title">@yield('title')</div>
             <button id="mobile-toggle" class="btn btn-outline" style="display:none;">Menu</button>
         </header>
-        @endauth
+    @endif
         
         <div class="content-wrapper">
             @if(session('success'))

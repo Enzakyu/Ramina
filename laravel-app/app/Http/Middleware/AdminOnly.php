@@ -20,10 +20,7 @@ class AdminOnly
     public function handle(Request $request, Closure $next): Response
     {
         if (!$request->session()->get('is_admin', false)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized: Admin access required',
-            ], 403);
+            return redirect()->route('employee.dashboard')->with('error', 'Forbidden. Administrator access required.');
         }
 
         return $next($request);

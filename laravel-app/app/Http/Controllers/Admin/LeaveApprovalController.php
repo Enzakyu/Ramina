@@ -16,48 +16,37 @@ class LeaveApprovalController extends Controller
     /**
      * Get all pending leave requests across the organisation.
      */
-    public function pending(): JsonResponse
+    public function pending(Request $request)
     {
         try {
             $pendingLeaves = $this->leaveService->getPendingLeaves();
 
-            return response()->json([
-                'success' => true,
-                'data'    => $pendingLeaves,
+            return view('admin.leaves', [
+                'leaves' => $pendingLeaves,
             ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to fetch pending leaves: ' . $e->getMessage(),
-            ], 500);
+            return back()->with('error', 'Failed to fetch pending leaves: ' . $e->getMessage());
         }
     }
 
     /**
      * Approve a pending leave request.
      */
-    public function approve(int $id): JsonResponse
+    public function approve(int $id)
     {
         try {
             $result = $this->leaveService->approveLeave($id);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Leave request approved successfully.',
-                'data'    => $result,
-            ]);
+            return back()->with('success', 'Leave request approved successfully.');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to approve leave request: ' . $e->getMessage(),
-            ], 500);
+            return back()->with('error', 'Failed to approve leave request: ' . $e->getMessage());
         }
     }
 
     /**
      * Reject a pending leave request with a reason.
      */
-    public function reject(Request $request, int $id): JsonResponse
+    public function reject(Request $request, int $id)
     {
         $validated = $request->validate([
             'reason' => 'required|string|max:1000',
@@ -66,16 +55,9 @@ class LeaveApprovalController extends Controller
         try {
             $result = $this->leaveService->rejectLeave($id, $validated['reason']);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Leave request rejected.',
-                'data'    => $result,
-            ]);
+            return back()->with('success', 'Leave request rejected.');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to reject leave request: ' . $e->getMessage(),
-            ], 500);
+            return back()->with('error', 'Failed to reject leave request: ' . $e->getMessage());
         }
     }
 }

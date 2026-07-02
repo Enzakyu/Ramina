@@ -18,71 +18,60 @@ use App\Http\Controllers\Admin\PayrollController;
 | Web Routes
 |--------------------------------------------------------------------------
 |
-| Ramina HR System API routes.
-| All routes return JSON responses. Authentication is handled via
-| Odoo JSON-RPC with file-based sessions.
+| Ramina HR System Web routes.
 |
 */
 
-// ─── Auth (no middleware) ────────────────────────────────────────────────────
-Route::post('/api/login', [LoginController::class, 'login']);
-Route::post('/api/logout', [LoginController::class, 'logout']);
+Route::get('/', [LoginController::class, 'showLoginForm'])->name('login.form');
+Route::post('/login', [LoginController::class, 'login'])->name('login');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // ─── Authenticated Routes ───────────────────────────────────────────────────
-Route::middleware(['odoo.auth'])->prefix('api')->group(function () {
-
-    // Current user
-    Route::get('/me', [LoginController::class, 'me']);
+Route::middleware(['odoo.auth'])->group(function () {
 
     // ─── Employee Routes ────────────────────────────────────────────────
-    Route::get('/dashboard', [DashboardController::class, 'index']);
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('employee.dashboard');
 
     Route::prefix('attendance')->group(function () {
-        Route::get('/status', [AttendanceController::class, 'status']);
-        Route::post('/toggle', [AttendanceController::class, 'toggle']);
-        Route::get('/history', [AttendanceController::class, 'history']);
+        Route::get('/', [AttendanceController::class, 'index'])->name('employee.attendance');
+        Route::post('/toggle', [AttendanceController::class, 'toggle'])->name('employee.attendance.toggle');
     });
 
     Route::prefix('leave')->group(function () {
-        Route::get('/types', [LeaveController::class, 'types']);
-        Route::get('/', [LeaveController::class, 'index']);
-        Route::post('/', [LeaveController::class, 'store']);
-        Route::get('/{id}', [LeaveController::class, 'show']);
+        Route::get('/', [LeaveController::class, 'index'])->name('employee.leaves');
+        Route::post('/', [LeaveController::class, 'store'])->name('employee.leaves.store');
     });
 
     Route::prefix('payslip')->group(function () {
-        Route::get('/', [PayslipController::class, 'index']);
-        Route::get('/{id}', [PayslipController::class, 'show']);
+        Route::get('/', [PayslipController::class, 'index'])->name('employee.payslips');
+        Route::get('/{id}', [PayslipController::class, 'show'])->name('employee.payslips.show');
     });
 
     Route::prefix('overtime')->group(function () {
-        Route::get('/', [OvertimeController::class, 'index']);
-        Route::get('/summary', [OvertimeController::class, 'summary']);
+        Route::get('/', [OvertimeController::class, 'index'])->name('employee.overtime');
     });
 
     // ─── Admin Routes ───────────────────────────────────────────────────
     Route::middleware(['admin'])->prefix('admin')->group(function () {
 
-        Route::get('/dashboard', [AdminDashboardController::class, 'index']);
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
         Route::prefix('employees')->group(function () {
-            Route::get('/', [AdminEmployeeController::class, 'index']);
-            Route::post('/', [AdminEmployeeController::class, 'store']);
-            Route::get('/{id}', [AdminEmployeeController::class, 'show']);
-            Route::put('/{id}', [AdminEmployeeController::class, 'update']);
+            Route::get('/', [AdminEmployeeController::class, 'index'])->name('admin.employees');
+            Route::post('/', [AdminEmployeeController::class, 'store'])->name('admin.employees.store');
         });
 
         Route::prefix('leave-approval')->group(function () {
-            Route::get('/pending', [LeaveApprovalController::class, 'pending']);
-            Route::post('/{id}/approve', [LeaveApprovalController::class, 'approve']);
-            Route::post('/{id}/reject', [LeaveApprovalController::class, 'reject']);
+            Route::get('/', [LeaveApprovalController::class, 'pending'])->name('admin.leaves');
+            Route::post('/{id}/approve', [LeaveApprovalController::class, 'approve'])->name('admin.leaves.approve');
+            Route::post('/{id}/reject', [LeaveApprovalController::class, 'reject'])->name('admin.leaves.reject');
         });
 
         Route::prefix('payroll')->group(function () {
-            Route::get('/', [PayrollController::class, 'index']);
-            Route::post('/generate', [PayrollController::class, 'generate']);
-            Route::post('/{id}/confirm', [PayrollController::class, 'confirm']);
-            Route::get('/{id}', [PayrollController::class, 'show']);
+            Route::get('/', [PayrollController::class, 'index'])->name('admin.payroll');
+            Route::post('/generate', [PayrollController::class, 'generate'])->name('admin.payroll.generate');
+            Route::get('/{id}', [PayrollController::class, 'show'])->name('admin.payroll.show');
+            Route::post('/{id}/confirm', [PayrollController::class, 'confirm'])->name('admin.payroll.confirm');
         });
     });
 });

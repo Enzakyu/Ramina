@@ -24,7 +24,7 @@ class DashboardController extends Controller
      * Returns total employee count, today's attendance breakdown,
      * pending leave requests count, and pending overtime count.
      */
-    public function index(): JsonResponse
+    public function index()
     {
         try {
             // Total employees
@@ -44,23 +44,15 @@ class DashboardController extends Controller
             $pendingOvertime = $this->overtimeService->getAllPendingOvertime();
             $pendingOvertimeCount = is_array($pendingOvertime) ? count($pendingOvertime) : 0;
 
-            return response()->json([
-                'success' => true,
-                'data'    => [
-                    'total_employees'  => $totalEmployees,
-                    'attendance'       => [
-                        'present' => $presentCount,
-                        'absent'  => max(0, $absentCount),
-                    ],
-                    'pending_leaves'   => $pendingLeavesCount,
-                    'pending_overtime' => $pendingOvertimeCount,
-                ],
+            return view('admin.dashboard', [
+                'totalEmployees' => $totalEmployees,
+                'presentCount' => $presentCount,
+                'absentCount' => max(0, $absentCount),
+                'pendingLeavesCount' => $pendingLeavesCount,
+                'pendingOvertimeCount' => $pendingOvertimeCount,
             ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to load admin dashboard: ' . $e->getMessage(),
-            ], 500);
+            return back()->with('error', 'Failed to load admin dashboard: ' . $e->getMessage());
         }
     }
 }

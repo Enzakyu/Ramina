@@ -16,99 +16,45 @@ class AttendanceController extends Controller
     /**
      * Get the current attendance status (checked in or out) for the session employee.
      */
-    public function status(Request $request): JsonResponse
+    public function index(Request $request)
     {
         $employeeId = $request->session()->get('employee_id');
 
         if (!$employeeId) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Employee record not found in session.',
-            ], 404);
+            return redirect()->route('login.form')->with('error', 'Employee record not found in session.');
         }
 
         try {
             $status = $this->attendanceService->getAttendanceStatus($employeeId);
+            $dateFrom = $request->query('date_from');
+            $dateTo = $request->query('date_to');
+            $history = $this->attendanceService->getAttendanceHistory($employeeId, $dateFrom, $dateTo);
 
-            return response()->json([
-                'success' => true,
-                'data'    => $status,
+            return view('employee.attendance', [
+                'status'  => $status,
+                'history' => $history,
             ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to fetch attendance status: ' . $e->getMessage(),
-            ], 500);
+            return back()->with('error', 'Failed to fetch attendance status: ' . $e->getMessage());
         }
     }
 
     /**
      * Toggle attendance (check-in / check-out) for the session employee.
      */
-    public function toggle(Request $request): JsonResponse
+    public function toggle(Request $request)
     {
         $employeeId = $request->session()->get('employee_id');
 
         if (!$employeeId) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Employee record not found in session.',
-            ], 404);
+            return redirect()->route('login.form')->with('error', 'Employee record not found in session.');
         }
 
         try {
             $result = $this->attendanceService->toggleAttendance($employeeId);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Attendance toggled successfully.',
-                'data'    => $result,
-            ]);
+            return back()->with('success', 'Attendance toggled successfully.');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to toggle attendance: ' . $e->getMessage(),
-            ], 500);
-        }
-    }
-
-    /**
-     * Get attendance history for the session employee.
-     *
-     * Accepts optional query parameters:
-     *   - date_from (Y-m-d)
-     *   - date_to   (Y-m-d)
-     */
-    public function history(Request $request): JsonResponse
-    {
-        $employeeId = $request->session()->get('employee_id');
-
-        if (!$employeeId) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Employee record not found in session.',
-            ], 404);
-        }
-
-        try {
-            $dateFrom = $request->query('date_from');
-            $dateTo = $request->query('date_to');
-
-            $history = $this->attendanceService->getAttendanceHistory(
-                $employeeId,
-                $dateFrom,
-                $dateTo
-            );
-
-            return response()->json([
-                'success' => true,
-                'data'    => $history,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to fetch attendance history: ' . $e->getMessage(),
-            ], 500);
+            return back()->with('error', 'Failed to toggle attendance: ' . $e->getMessage());
         }
     }
 }

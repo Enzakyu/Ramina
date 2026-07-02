@@ -25,15 +25,12 @@ class DashboardController extends Controller
      * Returns employee info, today's attendance status, pending leave count,
      * and the current month's overtime summary.
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request)
     {
         $employeeId = $request->session()->get('employee_id');
 
         if (!$employeeId) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Employee record not found in session.',
-            ], 404);
+            return redirect()->route('login.form')->with('error', 'Employee record not found in session.');
         }
 
         try {
@@ -55,20 +52,14 @@ class DashboardController extends Controller
                 $now->endOfMonth()->toDateString()
             );
 
-            return response()->json([
-                'success' => true,
-                'data'    => [
-                    'employee'           => $employee,
-                    'attendance_status'  => $attendanceStatus,
-                    'pending_leaves'     => $pendingLeavesCount,
-                    'overtime_summary'   => $overtimeSummary,
-                ],
+            return view('employee.dashboard', [
+                'employee'           => $employee,
+                'attendance_status'  => $attendanceStatus,
+                'pending_leaves'     => $pendingLeavesCount,
+                'overtime_summary'   => $overtimeSummary,
             ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to load dashboard: ' . $e->getMessage(),
-            ], 500);
+            return back()->with('error', 'Failed to load dashboard: ' . $e->getMessage());
         }
     }
 }
