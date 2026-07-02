@@ -8,7 +8,7 @@
         <field name="name">hr.overtime.bonus.tree</field>
         <field name="model">hr.overtime.bonus</field>
         <field name="arch" type="xml">
-            <tree string="Overtime Bonuses"
+            <list string="Overtime Bonuses"
                   decoration-info="state == 'draft'"
                   decoration-success="state == 'confirmed'"
                   decoration-muted="state == 'paid'">
@@ -26,7 +26,7 @@
                        decoration-info="state == 'draft'"
                        decoration-success="state == 'confirmed'"
                        decoration-warning="state == 'paid'"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -106,19 +106,6 @@
                 <filter name="filter_paid" string="Paid"
                         domain="[('state', '=', 'paid')]"/>
                 <separator/>
-                <filter name="filter_current_month" string="Current Month"
-                        domain="[('date', '&gt;=', (context_today()).strftime('%%Y-%%m-01'))]"/>
-                <separator/>
-                <group expand="0" string="Group By">
-                    <filter name="group_employee" string="Employee"
-                            context="{'group_by': 'employee_id'}"/>
-                    <filter name="group_date" string="Date"
-                            context="{'group_by': 'date'}"/>
-                    <filter name="group_month" string="Month"
-                            context="{'group_by': 'date:month'}"/>
-                    <filter name="group_state" string="Status"
-                            context="{'group_by': 'state'}"/>
-                </group>
             </search>
         </field>
     </record>
@@ -129,9 +116,9 @@
     <record id="hr_overtime_bonus_action" model="ir.actions.act_window">
         <field name="name">Overtime Bonuses</field>
         <field name="res_model">hr.overtime.bonus</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="hr_overtime_bonus_view_search"/>
-        <field name="context">{'search_default_filter_current_month': 1}</field>
+        <field name="context">{}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 No overtime bonuses found
@@ -143,19 +130,5 @@
             </p>
         </field>
     </record>
-
-    <!-- ================================================================ -->
-    <!-- Menu Items                                                        -->
-    <!-- ================================================================ -->
-    <menuitem id="menu_hr_overtime_bonus_root"
-              name="Overtime"
-              parent="hr_payroll.menu_hr_payroll_root"
-              sequence="40"/>
-
-    <menuitem id="menu_hr_overtime_bonus_list"
-              name="Overtime Bonuses"
-              parent="menu_hr_overtime_bonus_root"
-              action="hr_overtime_bonus_action"
-              sequence="10"/>
 
 </odoo>

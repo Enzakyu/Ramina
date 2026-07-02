@@ -25,9 +25,6 @@
         'hr',
         'hr_attendance',
         'hr_holidays',
-        'hr_payroll',
-        'hr_contract',
-        'hr_work_entry',
         'hr_custom_payroll',
     ],
     'data': [

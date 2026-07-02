@@ -55,7 +55,6 @@ class PayrollService
                 'name',
                 'number',
                 'net_wage',
-                'struct_id',
             ],
             options: [
                 'order' => 'date_from desc',
@@ -86,10 +85,7 @@ class PayrollService
                 'name',
                 'number',
                 'net_wage',
-                'struct_id',
                 'company_id',
-                'contract_id',
-                'payslip_run_id',
                 'line_ids',
             ],
         );
@@ -113,14 +109,7 @@ class PayrollService
                 'name',
                 'code',
                 'category_id',
-                'amount',
                 'total',
-                'sequence',
-                'quantity',
-                'rate',
-            ],
-            options: [
-                'order' => 'sequence asc',
             ],
         );
 
@@ -166,7 +155,6 @@ class PayrollService
                 'name',
                 'number',
                 'net_wage',
-                'struct_id',
             ],
             options: [
                 'order' => 'date_from desc',
@@ -199,20 +187,8 @@ class PayrollService
             'employees' => $employeeIds,
             'from'      => $dateFrom,
             'to'        => $dateTo,
-            'struct_id' => $structId,
         ]);
 
-        // 1. Create a payslip batch run.
-        $runName = 'Payslip Batch ' . $dateFrom . ' – ' . $dateTo;
-        $runId = $this->odoo->create('hr.payslip.run', [
-            'name'      => $runName,
-            'date_start' => $dateFrom,
-            'date_end'   => $dateTo,
-        ]);
-
-        Log::info('Payslip batch run created.', ['run_id' => $runId]);
-
-        // 2. Create individual payslips per employee.
         $payslipIds = [];
 
         foreach ($employeeIds as $employeeId) {
@@ -220,12 +196,7 @@ class PayrollService
                 'employee_id'    => (int) $employeeId,
                 'date_from'      => $dateFrom,
                 'date_to'        => $dateTo,
-                'payslip_run_id' => $runId,
             ];
-
-            if ($structId !== null) {
-                $values['struct_id'] = $structId;
-            }
 
             $payslipId = $this->odoo->create('hr.payslip', $values);
             $payslipIds[] = $payslipId;
@@ -239,12 +210,11 @@ class PayrollService
         }
 
         Log::info('Payslips generated.', [
-            'run_id'      => $runId,
             'payslip_ids' => $payslipIds,
         ]);
 
         return [
-            'run_id'      => $runId,
+            'run_id'      => null,
             'payslip_ids' => $payslipIds,
         ];
     }

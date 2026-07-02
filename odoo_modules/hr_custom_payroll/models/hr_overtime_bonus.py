@@ -9,6 +9,7 @@ _logger = logging.getLogger(__name__)
 class HrOvertimeBonus(models.Model):
     _name = 'hr.overtime.bonus'
     _description = 'Employee Overtime Bonus'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'date desc, employee_id'
     _rec_name = 'employee_id'
 
@@ -98,13 +99,6 @@ class HrOvertimeBonus(models.Model):
         help='Calculated overtime bonus: overtime_hours × overtime_rate × hourly_wage',
     )
 
-    _sql_constraints = [
-        (
-            'unique_employee_date_attendance',
-            'UNIQUE(employee_id, date, attendance_id)',
-            'An overtime record already exists for this employee, date, and attendance!'
-        ),
-    ]
 
     # -------------------------------------------------------------------------
     # Compute Methods
@@ -118,21 +112,19 @@ class HrOvertimeBonus(models.Model):
             standard = rec.standard_hours or 8.0
             rec.overtime_hours = max(0.0, worked - standard)
 
-    @api.depends('overtime_hours', 'overtime_rate', 'employee_id', 'employee_id.contract_id',
-                 'employee_id.contract_id.wage')
+    @api.depends('overtime_hours', 'overtime_rate', 'employee_id', 'employee_id.basic_salary')
     def _compute_bonus_amount(self):
         """
         Compute bonus amount based on:
             bonus = overtime_hours × overtime_rate × hourly_wage
-        Hourly wage is derived from the employee's current contract:
+        Hourly wage is derived from the employee's basic salary:
             hourly_wage = monthly_wage / 173 (average monthly working hours)
         """
         for rec in self:
             hourly_wage = 0.0
-            contract = rec.employee_id.contract_id
-            if contract and contract.wage:
+            if rec.employee_id and rec.employee_id.basic_salary:
                 # 173 hours = average monthly working hours (52 weeks × 40 hrs / 12 months)
-                hourly_wage = contract.wage / 173.0
+                hourly_wage = rec.employee_id.basic_salary / 173.0
             rec.bonus_amount = rec.overtime_hours * rec.overtime_rate * hourly_wage
 
     # -------------------------------------------------------------------------

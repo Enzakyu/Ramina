@@ -3,15 +3,6 @@
     <data noupdate="1">
 
         <!-- ============================================================ -->
-        <!-- Category: Ramina HR                                           -->
-        <!-- ============================================================ -->
-        <record id="module_category_ramina_hr" model="ir.module.category">
-            <field name="name">Ramina HR</field>
-            <field name="description">Ramina HR Management Security Groups</field>
-            <field name="sequence">10</field>
-        </record>
-
-        <!-- ============================================================ -->
         <!-- Group: Ramina Employee                                        -->
         <!-- Basic employee access - inherits base.group_user              -->
         <!-- ============================================================ -->
@@ -24,7 +15,6 @@
                 - View their own overtime records
                 - Request time off
             </field>
-            <field name="category_id" ref="module_category_ramina_hr"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
 
@@ -43,9 +33,7 @@
                 - Confirm and manage overtime bonuses
                 - Full access to all HR data
             </field>
-            <field name="category_id" ref="module_category_ramina_hr"/>
             <field name="implied_ids" eval="[(4, ref('hr.group_hr_manager'))]"/>
-            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
         </record>
 
         <!-- ============================================================ -->

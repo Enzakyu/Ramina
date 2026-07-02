@@ -15,6 +15,18 @@ class HrEmployeeInherit(models.Model):
         compute='_compute_overtime_stats',
         help='Total overtime hours in draft or confirmed status (not yet paid)',
     )
+    basic_salary = fields.Monetary(
+        string='Basic Monthly Salary',
+        currency_field='currency_id',
+        default=0.0,
+        help='Basic salary used for payroll and overtime bonus calculations',
+    )
+    currency_id = fields.Many2one(
+        'res.currency',
+        string='Currency',
+        related='company_id.currency_id',
+        readonly=True,
+    )
 
     @api.depends_context('uid')
     def _compute_overtime_stats(self):
