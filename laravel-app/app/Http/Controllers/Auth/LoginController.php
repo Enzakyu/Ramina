@@ -45,6 +45,7 @@ class LoginController extends Controller
         try {
             // Authenticate against Odoo
             $authResult = $this->odooService->authenticate(
+                config('odoo.db'),
                 $validated['email'],
                 $validated['password']
             );
