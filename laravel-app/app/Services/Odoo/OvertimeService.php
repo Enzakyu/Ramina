@@ -23,8 +23,9 @@ class OvertimeService
         'id',
         'employee_id',
         'date',
-        'duration',
-        'adjustment',
+        'overtime_hours',
+        'state',
+        'bonus_amount',
     ];
 
     public function __construct(OdooService $odoo)
@@ -56,7 +57,7 @@ class OvertimeService
         }
 
         return $this->odoo->searchRead(
-            model: 'hr.attendance.overtime',
+            model: 'hr.overtime.bonus',
             domain: $domain,
             fields: $this->defaultFields,
             options: [
@@ -85,9 +86,7 @@ class OvertimeService
 
         $totalHours = 0.0;
         foreach ($records as $record) {
-            $duration = (float) ($record['duration'] ?? 0);
-            $adjustment = (float) ($record['adjustment'] ?? 0);
-            $totalHours += $duration + $adjustment;
+            $totalHours += (float) ($record['overtime_hours'] ?? 0);
         }
 
         return [
@@ -114,14 +113,10 @@ class OvertimeService
      */
     public function getAllPendingOvertime(): array
     {
-        // Try fetching records that may need validation.
-        // Odoo 19's hr.attendance.overtime uses duration > 0 with
-        // adjustment = 0 indicating un-reviewed overtime.
         $records = $this->odoo->searchRead(
-            model: 'hr.attendance.overtime',
+            model: 'hr.overtime.bonus',
             domain: [
-                ['duration', '>', 0],
-                ['adjustment', '=', 0],
+                ['state', '=', 'draft'],
             ],
             fields: $this->defaultFields,
             options: [
@@ -154,22 +149,22 @@ class OvertimeService
         try {
             // Attempt the standard workflow action if available.
             $this->odoo->callMethod(
-                model: 'hr.attendance.overtime',
-                method: 'action_validate',
+                model: 'hr.overtime.bonus',
+                method: 'action_confirm',
                 args: [[$id]],
             );
 
-            Log::info('Overtime confirmed via action_validate.', ['overtime_id' => $id]);
+            Log::info('Overtime confirmed via action_confirm.', ['overtime_id' => $id]);
 
             return true;
         } catch (OdooException $e) {
             // If the method doesn't exist, fall back to a manual write.
             if (
-                str_contains($e->getMessage(), 'action_validate')
+                str_contains($e->getMessage(), 'action_confirm')
                 || str_contains($e->getMessage(), 'AttributeError')
                 || str_contains($e->getMessage(), 'not found')
             ) {
-                Log::info('action_validate not available, falling back to manual approval.', [
+                Log::info('action_confirm not available, falling back to manual approval.', [
                     'overtime_id' => $id,
                 ]);
 
@@ -193,30 +188,12 @@ class OvertimeService
      */
     protected function confirmOvertimeManual(int $id): bool
     {
-        // Read the current duration.
-        $records = $this->odoo->searchRead(
-            model: 'hr.attendance.overtime',
-            domain: [['id', '=', $id]],
-            fields: ['id', 'duration'],
-        );
-
-        if (empty($records)) {
-            throw new OdooException(
-                message: "Overtime record with ID {$id} not found.",
-                code: 404,
-                odooErrorType: 'record_not_found',
-            );
-        }
-
-        $duration = (float) ($records[0]['duration'] ?? 0);
-
-        $result = $this->odoo->write('hr.attendance.overtime', [$id], [
-            'adjustment' => $duration,
+        $result = $this->odoo->write('hr.overtime.bonus', [$id], [
+            'state' => 'confirmed',
         ]);
 
         Log::info('Overtime manually confirmed.', [
             'overtime_id' => $id,
-            'duration'    => $duration,
         ]);
 
         return $result;
