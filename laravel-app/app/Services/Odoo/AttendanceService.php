@@ -100,23 +100,25 @@ class AttendanceService
      * Get attendance history for an employee within a date range.
      *
      * @param int    $employeeId Odoo hr.employee ID.
-     * @param string $from       Start datetime (Y-m-d H:i:s or Y-m-d).
-     * @param string $to         End datetime (Y-m-d H:i:s or Y-m-d).
+     * @param string|null $from       Start datetime (Y-m-d H:i:s or Y-m-d).
+     * @param string|null $to         End datetime (Y-m-d H:i:s or Y-m-d).
      * @return array List of attendance records.
      *
      * @throws OdooException
      */
-    public function getAttendanceHistory(int $employeeId, string $from, string $to): array
+    public function getAttendanceHistory(int $employeeId, ?string $from, ?string $to): array
     {
-        // Normalise dates to full datetime strings if only date was given.
-        $dateFrom = $this->normaliseDateTime($from, '00:00:00');
-        $dateTo   = $this->normaliseDateTime($to, '23:59:59');
-
         $domain = [
             ['employee_id', '=', $employeeId],
-            ['check_in', '>=', $dateFrom],
-            ['check_in', '<=', $dateTo],
         ];
+
+        if ($from) {
+            $domain[] = ['check_in', '>=', $this->normaliseDateTime($from, '00:00:00')];
+        }
+        
+        if ($to) {
+            $domain[] = ['check_in', '<=', $this->normaliseDateTime($to, '23:59:59')];
+        }
 
         return $this->odoo->searchRead(
             model: 'hr.attendance',

@@ -121,21 +121,14 @@ class LoginController extends Controller
 
             $hrManagerGroupId = $groupData[0]['res_id'];
 
-            // Read the user's group IDs
-            $userData = $this->odooService->execute_kw(
-                'res.users',
-                'read',
-                [[$uid]],
-                ['fields' => ['groups_id']]
+            // Check if the user is in the HR Manager group
+            $groupCheck = $this->odooService->searchRead(
+                'res.groups',
+                [['id', '=', $hrManagerGroupId], ['user_ids', 'in', [$uid]]],
+                ['id']
             );
 
-            if (empty($userData) || empty($userData[0]['groups_id'])) {
-                return false;
-            }
-
-            $userGroupIds = $userData[0]['groups_id'];
-
-            return in_array($hrManagerGroupId, $userGroupIds);
+            return !empty($groupCheck);
         } catch (\Exception $e) {
             // If we can't determine admin status, default to non-admin
             return false;
