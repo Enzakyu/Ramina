@@ -36,10 +36,15 @@ class LeaveApprovalController extends Controller
     {
         try {
             $result = $this->leaveService->approveLeave($id);
-
-            return back()->with('success', 'Leave request approved successfully.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Leave request approved successfully.'
+            ]);
         } catch (\Exception $e) {
-            return back()->with('error', 'Failed to approve leave request: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to approve leave request: ' . $e->getMessage()
+            ], 500);
         }
     }
 
@@ -54,10 +59,15 @@ class LeaveApprovalController extends Controller
 
         try {
             $result = $this->leaveService->rejectLeave($id, $validated['reason']);
-
-            return back()->with('success', 'Leave request rejected.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Leave request rejected.'
+            ]);
         } catch (\Exception $e) {
-            return back()->with('error', 'Failed to reject leave request: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to reject leave request: ' . $e->getMessage()
+            ], 500);
         }
     }
 }

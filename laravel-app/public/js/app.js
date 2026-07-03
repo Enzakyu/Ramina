@@ -99,7 +99,7 @@ const RaminaHR = {
     async approveLeave(id) {
         if(!confirm('Approve this leave request?')) return;
         try {
-            await this.ajax(`/admin/leaves/${id}/approve`, 'POST');
+            await this.ajax(`/admin/leave-approval/${id}/approve`, 'POST');
             this.showNotification('Leave approved successfully', 'success');
             setTimeout(() => window.location.reload(), 1000);
         } catch(e) {}
@@ -110,7 +110,7 @@ const RaminaHR = {
         const reason = prompt('Reason for rejection:');
         if(reason === null) return;
         try {
-            await this.ajax(`/admin/leaves/${id}/reject`, 'POST', { reason });
+            await this.ajax(`/admin/leave-approval/${id}/reject`, 'POST', { reason });
             this.showNotification('Leave rejected', 'success');
             setTimeout(() => window.location.reload(), 1000);
         } catch(e) {}

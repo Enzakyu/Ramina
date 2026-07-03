@@ -37,29 +37,33 @@ class EmployeeController extends Controller
     }
 
     /**
-     * Get a single employee's details.
+     * Get a single employee's details and render profile view.
      */
-    public function show(int $id): JsonResponse
+    public function show(int $id, \App\Services\Odoo\AttendanceService $attendanceService, \App\Services\Odoo\PayrollService $payrollService)
     {
         try {
             $employee = $this->employeeService->getEmployee($id);
 
             if (!$employee) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Employee not found.',
-                ], 404);
+                return redirect()->route('admin.employees')->with('error', 'Employee not found.');
             }
 
-            return response()->json([
-                'success' => true,
-                'data'    => $employee,
+            // Fetch recent attendance
+            $now = \Carbon\Carbon::now();
+            $dateFrom = $now->copy()->startOfMonth()->toDateString();
+            $dateTo = $now->copy()->endOfMonth()->toDateString();
+            $attendanceSummary = $attendanceService->getAttendanceHistory($id, $dateFrom, $dateTo);
+
+            // Fetch recent payslips
+            $recentPayslips = $payrollService->getPayslips($id);
+
+            return view('admin.employees.show', [
+                'employee'          => $employee,
+                'attendanceSummary' => $attendanceSummary,
+                'recentPayslips'    => $recentPayslips,
             ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to fetch employee: ' . $e->getMessage(),
-            ], 500);
+            return redirect()->route('admin.employees')->with('error', 'Failed to fetch employee: ' . $e->getMessage());
         }
     }
 
@@ -93,7 +97,7 @@ class EmployeeController extends Controller
     /**
      * Update an existing employee record in Odoo.
      */
-    public function update(Request $request, int $id): JsonResponse
+    public function update(Request $request, int $id)
     {
         $validated = $request->validate([
             'name'          => 'sometimes|required|string|max:255',
@@ -109,18 +113,10 @@ class EmployeeController extends Controller
         ]);
 
         try {
-            $result = $this->employeeService->updateEmployee($id, $validated);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Employee updated successfully.',
-                'data'    => $result,
-            ]);
+            $this->employeeService->updateEmployee($id, $validated);
+            return back()->with('success', 'Employee updated successfully.');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to update employee: ' . $e->getMessage(),
-            ], 500);
+            return back()->with('error', 'Failed to update employee: ' . $e->getMessage());
         }
     }
 }

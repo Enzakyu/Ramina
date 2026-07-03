@@ -59,6 +59,8 @@ Route::middleware(['odoo.auth'])->group(function () {
         Route::prefix('employees')->group(function () {
             Route::get('/', [AdminEmployeeController::class, 'index'])->name('admin.employees');
             Route::post('/', [AdminEmployeeController::class, 'store'])->name('admin.employees.store');
+            Route::get('/{id}', [AdminEmployeeController::class, 'show'])->name('admin.employees.show');
+            Route::put('/{id}', [AdminEmployeeController::class, 'update'])->name('admin.employees.update');
         });
 
         Route::prefix('leave-approval')->group(function () {

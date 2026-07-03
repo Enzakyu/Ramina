@@ -52,9 +52,15 @@ class AttendanceController extends Controller
 
         try {
             $result = $this->attendanceService->toggleAttendance($employeeId);
-            return back()->with('success', 'Attendance toggled successfully.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Attendance toggled successfully.'
+            ]);
         } catch (\Exception $e) {
-            return back()->with('error', 'Failed to toggle attendance: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to toggle attendance: ' . $e->getMessage()
+            ], 500);
         }
     }
 }
