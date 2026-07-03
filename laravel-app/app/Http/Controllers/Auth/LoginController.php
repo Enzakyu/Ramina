@@ -108,13 +108,11 @@ class LoginController extends Controller
     private function checkAdminGroup(int $uid): bool
     {
         try {
-            // Get the HR Manager group's actual ID from ir.model.data
             $groupData = $this->odooService->searchRead(
                 'ir.model.data',
                 [['module', '=', 'hr'], ['name', '=', 'group_hr_manager']],
                 ['res_id'],
-                0,
-                1
+                ['offset' => 0, 'limit' => 1]
             );
 
             if (empty($groupData)) {
