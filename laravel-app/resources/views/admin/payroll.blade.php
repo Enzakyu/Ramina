@@ -90,7 +90,7 @@
             <h3 class="card-title">Run Payroll</h3>
             <button class="btn btn-outline" style="padding: 0.2rem 0.5rem;" data-dismiss="modal">&times;</button>
         </div>
-        <form action="{{ route('admin.payroll.run') }}" method="POST">
+        <form action="{{ route('admin.payroll.generate') }}" method="POST">
             @csrf
             <div style="display: flex; gap: 1rem;">
                 <div class="form-group" style="flex:1;">
