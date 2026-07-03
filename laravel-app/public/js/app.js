@@ -77,7 +77,7 @@ const RaminaHR = {
         btn.innerHTML = '<svg class="animate-spin" style="width:40px;height:40px" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="4" stroke-dasharray="32" stroke-linecap="round"></circle></svg>';
         
         try {
-            const res = await this.ajax('/employee/attendance/toggle', 'POST');
+            const res = await this.ajax('/attendance/toggle', 'POST');
             this.showNotification(res.message, 'success');
             setTimeout(() => window.location.reload(), 1000);
         } catch(e) {

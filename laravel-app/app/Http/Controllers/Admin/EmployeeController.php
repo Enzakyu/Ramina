@@ -26,7 +26,7 @@ class EmployeeController extends Controller
             $limit = (int) $request->query('limit', 20);
             $offset = (int) $request->query('offset', 0);
 
-            $employees = $this->employeeService->getAllEmployees($limit, $offset);
+            $employees = $this->employeeService->getAllEmployees([], $limit, $offset);
 
             return view('admin.employees.index', [
                 'employees' => $employees,

@@ -37,8 +37,8 @@ class LeaveService
                 'name',
                 'max_leaves',
                 'leaves_taken',
-                'remaining_leaves',
-                'allocation_type',
+                'virtual_remaining_leaves',
+                'requires_allocation',
             ],
             options: [
                 'order' => 'name asc',
