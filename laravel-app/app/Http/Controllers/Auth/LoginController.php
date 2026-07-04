@@ -61,6 +61,10 @@ class LoginController extends Controller
             if ($sessionId) {
                 $this->odooService->setSession($sessionId, $uid);
             }
+            
+            // Crucial: We must override the API key for the current request
+            // so that subsequent execute_kw calls authenticate as the logged-in user
+            $this->odooService->setApiKey($validated['password']);
 
             // Fetch employee record linked to this Odoo user
             $employee = $this->employeeService->getEmployeeByUserId($uid);
@@ -75,6 +79,7 @@ class LoginController extends Controller
             // Store session data
             $request->session()->put('odoo_session_id', $sessionId);
             $request->session()->put('odoo_uid', $uid);
+            $request->session()->put('odoo_password', $validated['password']);
             $request->session()->put('user_name', $userName);
             $request->session()->put('employee_id', $employeeId);
             $request->session()->put('is_admin', $isAdmin);

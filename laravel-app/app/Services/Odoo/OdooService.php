@@ -142,6 +142,16 @@ class OdooService
         $this->cookieJar->setCookie($cookie);
     }
 
+    /**
+     * Override the API key / password used for execute_kw calls.
+     *
+     * @param string $apiKey The user's password or API key.
+     */
+    public function setApiKey(string $apiKey): void
+    {
+        $this->apiKey = $apiKey;
+    }
+
     // ─────────────────────────────────────────────────────────────
     //  Core ORM wrappers
     // ─────────────────────────────────────────────────────────────

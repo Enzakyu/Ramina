@@ -32,6 +32,11 @@ class OdooAuth
         $odooService = app(OdooService::class);
         $odooService->setSession($sessionId, $uid);
 
+        $password = $request->session()->get('odoo_password');
+        if ($password) {
+            $odooService->setApiKey($password);
+        }
+
         return $next($request);
     }
 }

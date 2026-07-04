@@ -175,6 +175,21 @@ body {
     min-height: 100vh;
 }
 
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.stat-icon svg {
+    width: 24px;
+    height: 24px;
+}
+
 .top-bar {
     height: var(--header-height);
     padding: 0 2rem;
