@@ -62,6 +62,13 @@ class DashboardController extends Controller
 
             // Recent Activity (we'll just use the today's attendance records)
             $recentActivity = is_array($todayAttendance) ? array_slice($todayAttendance, 0, 5) : [];
+            foreach ($recentActivity as &$act) {
+                if (isset($act['employee_id']) && is_array($act['employee_id'])) {
+                    $act['employee_name'] = $act['employee_id'][1];
+                } else {
+                    $act['employee_name'] = 'Employee';
+                }
+            }
 
             return view('admin.dashboard', [
                 'totalEmployees' => $totalEmployees,

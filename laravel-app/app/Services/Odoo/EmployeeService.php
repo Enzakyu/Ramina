@@ -143,7 +143,7 @@ class EmployeeService
      */
     public function getJobs(): array
     {
-        return $this->odoo->searchRead('hr.job', [], ['id', 'name', 'department_id']);
+        return $this->odoo->searchRead('hr.job', [], ['id', 'name', 'department_id', 'x_basic_salary']);
     }
 
     /**
@@ -168,6 +168,9 @@ class EmployeeService
         $values = ['name' => $data['name']];
         if (!empty($data['department_id'])) {
             $values['department_id'] = (int) $data['department_id'];
+        }
+        if (isset($data['basic_salary'])) {
+            $values['x_basic_salary'] = (float) $data['basic_salary'];
         }
         return $this->odoo->create('hr.job', $values);
     }

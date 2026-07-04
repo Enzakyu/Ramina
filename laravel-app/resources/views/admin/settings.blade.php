@@ -95,6 +95,10 @@
                             @endforeach
                         </select>
                     </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label">Base Salary (Optional)</label>
+                        <input type="number" name="basic_salary" class="form-control" step="1" min="0" placeholder="e.g. 3500000">
+                    </div>
                     <button type="submit" class="btn btn-primary" style="align-self: flex-start;">Add Job Position</button>
                 </div>
             </form>
@@ -105,6 +109,7 @@
                         <tr>
                             <th>Job Title</th>
                             <th>Department</th>
+                            <th>Base Salary</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -112,9 +117,10 @@
                             <tr>
                                 <td><strong>{{ $job['name'] }}</strong></td>
                                 <td>{{ is_array($job['department_id']) ? $job['department_id'][1] : '-' }}</td>
+                                <td>{{ isset($job['x_basic_salary']) && $job['x_basic_salary'] > 0 ? 'Rp ' . number_format($job['x_basic_salary'], 0, ',', '.') : '-' }}</td>
                             </tr>
                         @empty
-                            <tr><td colspan="2" class="text-secondary text-center">No job positions found.</td></tr>
+                            <tr><td colspan="3" class="text-secondary text-center">No job positions found.</td></tr>
                         @endforelse
                     </tbody>
                 </table>

@@ -111,6 +111,15 @@ class EmployeeController extends Controller
 
         if (isset($validated['basic_salary']) && $validated['basic_salary'] !== null && $validated['basic_salary'] !== '') {
             $validated['basic_salary'] = (float) $validated['basic_salary'];
+        } elseif ($validated['job_id']) {
+            // Fallback to job's predetermined base salary if not provided
+            $jobs = app(\App\Services\Odoo\EmployeeService::class)->getJobs();
+            foreach ($jobs as $job) {
+                if ($job['id'] == $validated['job_id'] && !empty($job['x_basic_salary'])) {
+                    $validated['basic_salary'] = (float) $job['x_basic_salary'];
+                    break;
+                }
+            }
         }
 
         try {

@@ -70,10 +70,10 @@
             <div style="display: flex; gap: 1rem;">
                 <div class="form-group" style="flex:1;">
                     <label class="form-label">Job Position</label>
-                    <select name="job_id" class="form-select">
+                    <select name="job_id" id="jobSelect" class="form-select" onchange="updateBasicSalary()">
                         <option value="">Select Job Position...</option>
                         @foreach($jobs ?? [] as $job)
-                            <option value="{{ $job['id'] }}">{{ $job['name'] }}</option>
+                            <option value="{{ $job['id'] }}" data-salary="{{ $job['x_basic_salary'] ?? '' }}">{{ $job['name'] }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -101,7 +101,8 @@
 
             <div class="form-group">
                 <label class="form-label">Basic Salary (IDR)</label>
-                <input type="number" name="basic_salary" class="form-control" placeholder="e.g. 5000000" min="0">
+                <input type="number" name="basic_salary" id="basicSalaryInput" class="form-control" placeholder="e.g. 5000000" min="0">
+                <small class="text-secondary" style="margin-top:0.5rem; display:block;">Leaving this blank will use the job position's base salary, if available.</small>
             </div>
             <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:1.5rem;">
                 <button type="button" class="btn btn-outline" data-dismiss="modal">Cancel</button>
@@ -125,6 +126,19 @@ function filterEmployees() {
             rows[i].style.display = "";
         } else {
             rows[i].style.display = "none";
+        }
+    }
+}
+
+function updateBasicSalary() {
+    const jobSelect = document.getElementById('jobSelect');
+    const salaryInput = document.getElementById('basicSalaryInput');
+    
+    if (jobSelect && jobSelect.selectedIndex > 0) {
+        const option = jobSelect.options[jobSelect.selectedIndex];
+        const salary = option.getAttribute('data-salary');
+        if (salary && salary !== '0') {
+            salaryInput.value = salary;
         }
     }
 }

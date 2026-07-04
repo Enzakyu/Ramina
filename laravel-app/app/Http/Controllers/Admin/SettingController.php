@@ -56,6 +56,7 @@ class SettingController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'department_id' => 'nullable|integer',
+            'basic_salary' => 'nullable|numeric|min:0',
         ]);
 
         try {
