@@ -50,6 +50,10 @@ Route::middleware(['odoo.auth'])->group(function () {
     Route::prefix('overtime')->group(function () {
         Route::get('/', [OvertimeController::class, 'index'])->name('employee.overtime');
     });
+    
+    // HR Features (Employee)
+    Route::get('/compensations', [App\Http\Controllers\Employee\HRFeaturesController::class, 'compensations'])->name('employee.compensations');
+    Route::post('/compensations', [App\Http\Controllers\Employee\HRFeaturesController::class, 'storeCompensation'])->name('employee.compensations.store');
 
     // ─── Admin Routes ───────────────────────────────────────────────────
     Route::middleware(['admin'])->prefix('admin')->group(function () {
@@ -83,5 +87,17 @@ Route::middleware(['odoo.auth'])->group(function () {
             Route::post('/jobs', [App\Http\Controllers\Admin\SettingController::class, 'storeJob'])->name('admin.settings.jobs.store');
             Route::put('/jobs/{id}', [App\Http\Controllers\Admin\SettingController::class, 'updateJob'])->name('admin.settings.jobs.update');
         });
+
+        // HR Features (Admin)
+        Route::get('/announcements', [App\Http\Controllers\Admin\HRFeaturesController::class, 'announcements'])->name('admin.announcements');
+        Route::post('/announcements', [App\Http\Controllers\Admin\HRFeaturesController::class, 'storeAnnouncement'])->name('admin.announcements.store');
+        Route::delete('/announcements/{id}', [App\Http\Controllers\Admin\HRFeaturesController::class, 'destroyAnnouncement'])->name('admin.announcements.destroy');
+        
+        Route::get('/compensations', [App\Http\Controllers\Admin\HRFeaturesController::class, 'compensations'])->name('admin.compensations');
+        Route::post('/compensations/{id}', [App\Http\Controllers\Admin\HRFeaturesController::class, 'updateCompensation'])->name('admin.compensations.update');
+        
+        Route::get('/payroll-data', [App\Http\Controllers\Admin\HRFeaturesController::class, 'payrollData'])->name('admin.payroll_data');
+        Route::post('/adjustments', [App\Http\Controllers\Admin\HRFeaturesController::class, 'storeAdjustment'])->name('admin.adjustments.store');
+        Route::post('/performance', [App\Http\Controllers\Admin\HRFeaturesController::class, 'storePerformanceReview'])->name('admin.performance.store');
     });
 });
