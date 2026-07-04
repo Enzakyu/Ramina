@@ -21,7 +21,7 @@
                     {{ substr($employee['name'] ?? 'E', 0, 1) }}
                 </div>
                 <h3 style="font-size: 1.25rem; font-weight: 600;">{{ $employee['name'] ?? 'Employee Name' }}</h3>
-                <p style="color: var(--primary); font-weight: 500;">{{ is_array($employee['job_title'] ?? null) ? $employee['job_title'][1] : ($employee['job_title'] ?? 'Position') }}</p>
+                <p style="color: var(--primary); font-weight: 500;">{{ is_array($employee['job_id'] ?? null) ? $employee['job_id'][1] : 'Position' }}</p>
                 <p style="color: var(--text-secondary); font-size: 0.9rem;">{{ is_array($employee['department_id'] ?? null) ? $employee['department_id'][1] : 'Department' }}</p>
             </div>
             

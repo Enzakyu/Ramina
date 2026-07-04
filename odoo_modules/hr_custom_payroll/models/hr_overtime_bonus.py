@@ -36,9 +36,15 @@ class HrOvertimeBonus(models.Model):
         string='Worked Hours',
         digits=(16, 2),
     )
+    def _default_standard_hours(self):
+        return float(self.env['ir.config_parameter'].sudo().get_param('ramina.standard_hours', default='8.0'))
+
+    def _default_overtime_rate(self):
+        return float(self.env['ir.config_parameter'].sudo().get_param('ramina.overtime_rate', default='1.5'))
+
     standard_hours = fields.Float(
         string='Standard Hours',
-        default=8.0,
+        default=_default_standard_hours,
         help='Standard working hours per day (default: 8 hours for 9 AM - 5 PM schedule)',
     )
     overtime_hours = fields.Float(
@@ -50,7 +56,7 @@ class HrOvertimeBonus(models.Model):
     )
     overtime_rate = fields.Float(
         string='Overtime Rate Multiplier',
-        default=1.5,
+        default=_default_overtime_rate,
         help='Multiplier applied to hourly wage for overtime pay (default: 1.5x)',
     )
     state = fields.Selection(
@@ -166,8 +172,10 @@ class HrOvertimeBonus(models.Model):
         day_start = datetime.combine(yesterday, time(0, 0, 0))
         day_end = datetime.combine(yesterday + timedelta(days=1), time(0, 0, 0))
 
+        std_hours = float(self.env['ir.config_parameter'].sudo().get_param('ramina.standard_hours', default='8.0'))
+
         _logger.info(
-            'Overtime Cron: Scanning attendance records for %s', yesterday
+            'Overtime Cron: Scanning attendance records for %s with standard hours %s', yesterday, std_hours
         )
 
         # Fetch all completed attendance records for yesterday
@@ -189,7 +197,7 @@ class HrOvertimeBonus(models.Model):
 
             # Determine if this qualifies as overtime
             worked = att.worked_hours or 0.0
-            if worked <= 8.0:
+            if worked <= std_hours:
                 # Also check if check_out time is past 17:00 in employee's timezone
                 check_out_local = fields.Datetime.context_timestamp(
                     att.employee_id, att.check_out
@@ -197,7 +205,7 @@ class HrOvertimeBonus(models.Model):
                 if check_out_local.hour < 17:
                     continue
                 # Even if checked out after 17:00, only create if actual overtime exists
-                if worked <= 8.0:
+                if worked <= std_hours:
                     continue
 
             # Create overtime bonus record
@@ -207,7 +215,7 @@ class HrOvertimeBonus(models.Model):
                 'check_in': att.check_in,
                 'check_out': att.check_out,
                 'worked_hours': worked,
-                'standard_hours': 8.0,
+                'standard_hours': std_hours,
                 'attendance_id': att.id,
                 'state': 'draft',
             })

@@ -1,4 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_overtime_bonus_base,hr.overtime.bonus.base,model_hr_overtime_bonus,base.group_user,1,0,0,0
 access_hr_overtime_bonus_user,hr.overtime.bonus.user,model_hr_overtime_bonus,hr.group_hr_user,1,1,1,0
 access_hr_overtime_bonus_manager,hr.overtime.bonus.manager,model_hr_overtime_bonus,hr.group_hr_manager,1,1,1,1
 access_hr_payslip_user,hr.payslip.user,model_hr_payslip,hr.group_hr_user,1,1,1,0
