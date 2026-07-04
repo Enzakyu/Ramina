@@ -27,7 +27,7 @@ class LeaveController extends Controller
             $leaveTypes = $this->leaveService->getLeaveTypes();
 
             return view('employee.leaves', [
-                'leaves' => $leaves,
+                'leaveRequests' => $leaves,
                 'leaveTypes' => $leaveTypes,
             ]);
         } catch (\Exception $e) {

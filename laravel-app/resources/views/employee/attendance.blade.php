@@ -33,7 +33,7 @@
                 Status: 
                 @if($checkedIn)
                     <span style="color: var(--warning); font-weight: 600;">Currently Checked In</span>
-                    <br>Since {{ $status['last_check_in'] ? \Carbon\Carbon::parse($status['last_check_in'])->setTimezone('Asia/Jakarta')->format('H:i') : '--' }}
+                    <br>Since {{ $status['last_check_in'] ? \Carbon\Carbon::parse($status['last_check_in'], 'UTC')->setTimezone('Asia/Jakarta')->format('H:i') : '--' }}
                 @else
                     <span style="color: var(--text-secondary); font-weight: 600;">Checked Out</span>
                 @endif
@@ -59,8 +59,8 @@
                     <tbody>
                         @forelse($history ?? [] as $record)
                         @php
-                            $date = \Carbon\Carbon::parse($record['check_in'])->setTimezone('Asia/Jakarta');
-                            $out = $record['check_out'] ? \Carbon\Carbon::parse($record['check_out'])->setTimezone('Asia/Jakarta') : null;
+                            $date = \Carbon\Carbon::parse($record['check_in'], 'UTC')->setTimezone('Asia/Jakarta');
+                            $out = $record['check_out'] ? \Carbon\Carbon::parse($record['check_out'], 'UTC')->setTimezone('Asia/Jakarta') : null;
                             $hours = $record['worked_hours'] ?? 0;
                             $isOvertime = $hours > 8;
                         @endphp
