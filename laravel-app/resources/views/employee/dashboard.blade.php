@@ -12,7 +12,7 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
             </div>
             <div class="stat-value" style="font-size: 1.5rem;">
-                {{ $attendanceStatus['is_checked_in'] ?? false ? 'Checked In' : 'Not Checked In' }}
+                {{ $attendanceStatus['checked_in'] ?? false ? 'Checked In' : 'Not Checked In' }}
             </div>
             <div class="stat-label">Current Status</div>
         </div>

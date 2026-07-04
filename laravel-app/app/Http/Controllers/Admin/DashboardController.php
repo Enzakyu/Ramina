@@ -37,19 +37,40 @@ class DashboardController extends Controller
             $absentCount = $totalEmployees - $presentCount;
 
             // Pending leave requests
-            $pendingLeaves = $this->leaveService->getPendingLeaves();
-            $pendingLeavesCount = is_array($pendingLeaves) ? count($pendingLeaves) : 0;
+            $pendingLeavesList = $this->leaveService->getPendingLeaves();
+            $pendingLeaves = is_array($pendingLeavesList) ? count($pendingLeavesList) : 0;
 
-            // Pending overtime approvals
-            $pendingOvertime = $this->overtimeService->getAllPendingOvertime();
-            $pendingOvertimeCount = is_array($pendingOvertime) ? count($pendingOvertime) : 0;
+            // Unique checked in employees today
+            $checkedInToday = 0;
+            if (is_array($todayAttendance) && count($todayAttendance) > 0) {
+                $uniqueEmployees = [];
+                foreach ($todayAttendance as $att) {
+                    if (isset($att['employee_id']) && is_array($att['employee_id'])) {
+                        $uniqueEmployees[$att['employee_id'][0]] = true;
+                    }
+                }
+                $checkedInToday = count($uniqueEmployees);
+            }
+
+            // Payroll This Month
+            $payrollService = app(\App\Services\Odoo\PayrollService::class);
+            $dateFrom = date('Y-m-01');
+            $dateTo = date('Y-m-t');
+            $payslips = $payrollService->getAllPayslips($dateFrom, $dateTo);
+            $payrollTotal = 0;
+            foreach ($payslips as $slip) {
+                $payrollTotal += $slip['net_wage'] ?? 0;
+            }
+
+            // Recent Activity (we'll just use the today's attendance records)
+            $recentActivity = is_array($todayAttendance) ? array_slice($todayAttendance, 0, 5) : [];
 
             return view('admin.dashboard', [
                 'totalEmployees' => $totalEmployees,
-                'presentCount' => $presentCount,
-                'absentCount' => max(0, $absentCount),
-                'pendingLeavesCount' => $pendingLeavesCount,
-                'pendingOvertimeCount' => $pendingOvertimeCount,
+                'checkedInToday' => $checkedInToday,
+                'pendingLeaves' => $pendingLeaves,
+                'payrollTotal' => $payrollTotal,
+                'recentActivity' => $recentActivity,
             ]);
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to load admin dashboard: ' . $e->getMessage());

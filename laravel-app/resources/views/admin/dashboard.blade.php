@@ -55,12 +55,12 @@
                             <div class="timeline-content">
                                 <strong>{{ $act['employee_name'] ?? 'Employee' }}</strong>
                                 <span style="float:right; font-size:0.8rem; color:var(--text-secondary);">
-                                    {{ \Carbon\Carbon::parse($act['check_in'])->diffForHumans() }}
+                                    {{ \Carbon\Carbon::parse($act['check_in'], 'UTC')->setTimezone('Asia/Jakarta')->diffForHumans() }}
                                 </span>
                                 <p style="margin-top:0.5rem; font-size:0.9rem; color:var(--text-secondary);">
-                                    Checked in at {{ \Carbon\Carbon::parse($act['check_in'])->format('H:i') }}
+                                    Checked in at {{ \Carbon\Carbon::parse($act['check_in'], 'UTC')->setTimezone('Asia/Jakarta')->format('H:i') }}
                                     @if($act['check_out'])
-                                        and checked out at {{ \Carbon\Carbon::parse($act['check_out'])->format('H:i') }}
+                                        and checked out at {{ \Carbon\Carbon::parse($act['check_out'], 'UTC')->setTimezone('Asia/Jakarta')->format('H:i') }}
                                     @endif
                                 </p>
                             </div>
