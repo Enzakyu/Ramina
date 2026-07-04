@@ -116,11 +116,27 @@ class EmployeeService
     }
 
     /**
+     * Get all departments.
+     */
+    public function getDepartments(): array
+    {
+        return $this->odoo->searchRead('hr.department', [], ['id', 'name']);
+    }
+
+    /**
+     * Get all job positions.
+     */
+    public function getJobs(): array
+    {
+        return $this->odoo->searchRead('hr.job', [], ['id', 'name']);
+    }
+
+    /**
      * Create a new employee record.
      *
      * @param array $data Field values for the new employee. Example keys:
      *                    name, job_id, department_id, work_email, work_phone,
-     *                    employee_type, parent_id, identification_id, etc.
+     *                    employee_type, parent_id, identification_id, password, etc.
      * @return int The ID of the created hr.employee record.
      *
      * @throws OdooException
@@ -135,6 +151,32 @@ class EmployeeService
                 odooErrorType: 'validation_error',
             );
         }
+
+        // Auto-create Odoo user if email is provided
+        if (!empty($data['work_email'])) {
+            try {
+                // Check if user already exists
+                $existingUsers = $this->odoo->searchRead('res.users', [['login', '=', $data['work_email']]], ['id']);
+                
+                if (!empty($existingUsers)) {
+                    $data['user_id'] = $existingUsers[0]['id'];
+                } else {
+                    $password = $data['password'] ?? 'password123';
+                    // Create new user
+                    $userId = $this->odoo->create('res.users', [
+                        'name' => $data['name'],
+                        'login' => $data['work_email'],
+                        'password' => $password,
+                    ]);
+                    $data['user_id'] = $userId;
+                }
+            } catch (\Exception $e) {
+                Log::error('Failed to auto-create res.users for employee.', ['error' => $e->getMessage()]);
+                // Proceed to create employee without linking if user creation fails
+            }
+        }
+
+        unset($data['password']);
 
         $id = $this->odoo->create('hr.employee', $data);
 

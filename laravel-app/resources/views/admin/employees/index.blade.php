@@ -67,18 +67,35 @@
                 <label class="form-label">Full Name</label>
                 <input type="text" name="name" class="form-control" required>
             </div>
-            <div class="form-group">
-                <label class="form-label">Work Email</label>
-                <input type="email" name="work_email" class="form-control" required>
-            </div>
             <div style="display: flex; gap: 1rem;">
                 <div class="form-group" style="flex:1;">
-                    <label class="form-label">Department ID (Odoo)</label>
-                    <input type="number" name="department_id" class="form-control">
+                    <label class="form-label">Job Position</label>
+                    <select name="job_id" class="form-select">
+                        <option value="">Select Job Position...</option>
+                        @foreach($jobs ?? [] as $job)
+                            <option value="{{ $job['id'] }}">{{ $job['name'] }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div class="form-group" style="flex:1;">
-                    <label class="form-label">Job Position ID (Odoo)</label>
-                    <input type="number" name="job_id" class="form-control">
+                    <label class="form-label">Department</label>
+                    <select name="department_id" class="form-select">
+                        <option value="">Select Department...</option>
+                        @foreach($departments ?? [] as $dept)
+                            <option value="{{ $dept['id'] }}">{{ $dept['name'] }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <div class="form-group" style="flex:1;">
+                    <label class="form-label">Work Email (Used for Login)</label>
+                    <input type="email" name="work_email" class="form-control" placeholder="employee@ramina.com">
+                </div>
+                <div class="form-group" style="flex:1;">
+                    <label class="form-label">Login Password</label>
+                    <input type="text" name="password" class="form-control" placeholder="Leave empty for 'password123'">
                 </div>
             </div>
             <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:1.5rem;">

@@ -27,9 +27,13 @@ class EmployeeController extends Controller
             $offset = (int) $request->query('offset', 0);
 
             $employees = $this->employeeService->getAllEmployees([], $limit, $offset);
+            $departments = $this->employeeService->getDepartments();
+            $jobs = $this->employeeService->getJobs();
 
             return view('admin.employees.index', [
                 'employees' => $employees,
+                'departments' => $departments,
+                'jobs' => $jobs,
             ]);
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to fetch employees: ' . $e->getMessage());
@@ -83,6 +87,7 @@ class EmployeeController extends Controller
             'birthday'      => 'nullable|date',
             'marital'       => 'nullable|string|in:single,married,cohabitant,widower,divorced',
             'identification_id' => 'nullable|string|max:100',
+            'password'      => 'nullable|string|min:6',
         ]);
 
         try {
