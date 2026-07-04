@@ -98,6 +98,5 @@ Route::middleware(['odoo.auth'])->group(function () {
         
         Route::get('/payroll-data', [App\Http\Controllers\Admin\HRFeaturesController::class, 'payrollData'])->name('admin.payroll_data');
         Route::post('/adjustments', [App\Http\Controllers\Admin\HRFeaturesController::class, 'storeAdjustment'])->name('admin.adjustments.store');
-        Route::post('/performance', [App\Http\Controllers\Admin\HRFeaturesController::class, 'storePerformanceReview'])->name('admin.performance.store');
     });
 });

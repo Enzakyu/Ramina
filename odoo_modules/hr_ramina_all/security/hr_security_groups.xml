@@ -81,7 +81,7 @@
             <field name="name">Ramina HR Admin: All Employee Records</field>
             <field name="model_id" ref="hr.model_hr_employee"/>
             <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="groups" eval="[(4, ref('ramina_group_hr_admin'))]"/>
+            <field name="groups" eval="[(4, ref('hr.group_hr_manager'))]"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
@@ -93,7 +93,7 @@
             <field name="name">Ramina HR Admin: All Attendance Records</field>
             <field name="model_id" ref="hr_attendance.model_hr_attendance"/>
             <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="groups" eval="[(4, ref('ramina_group_hr_admin'))]"/>
+            <field name="groups" eval="[(4, ref('hr.group_hr_manager'))]"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
@@ -105,7 +105,7 @@
             <field name="name">Ramina HR Admin: All Overtime Bonuses</field>
             <field name="model_id" ref="hr_custom_payroll.model_hr_overtime_bonus"/>
             <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="groups" eval="[(4, ref('ramina_group_hr_admin'))]"/>
+            <field name="groups" eval="[(4, ref('hr.group_hr_manager'))]"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
@@ -117,7 +117,7 @@
             <field name="name">Ramina HR Admin: All Payslips</field>
             <field name="model_id" search="[('model', '=', 'hr.payslip')]"/>
             <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="groups" eval="[(4, ref('ramina_group_hr_admin'))]"/>
+            <field name="groups" eval="[(4, ref('hr.group_hr_manager'))]"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
@@ -129,7 +129,7 @@
             <field name="name">Ramina HR Admin: All Payslip Lines</field>
             <field name="model_id" search="[('model', '=', 'hr.payslip.line')]"/>
             <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="groups" eval="[(4, ref('ramina_group_hr_admin'))]"/>
+            <field name="groups" eval="[(4, ref('hr.group_hr_manager'))]"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
