@@ -35,5 +35,91 @@
             </div>
         </form>
     </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
+        <!-- Departments -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Departments</h2>
+            </div>
+            
+            <form action="{{ route('admin.settings.departments.store') }}" method="POST" onsubmit="RaminaHR.showLoading(this)">
+                @csrf
+                <div style="display: flex; gap: 1rem; align-items: flex-end; margin-bottom: 1.5rem;">
+                    <div class="form-group" style="margin-bottom: 0; flex: 1;">
+                        <label class="form-label">New Department Name</label>
+                        <input type="text" name="name" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+            </form>
+
+            <div style="max-height: 300px; overflow-y: auto;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Department Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($departments ?? [] as $dept)
+                            <tr>
+                                <td>{{ $dept['name'] }}</td>
+                            </tr>
+                        @empty
+                            <tr><td class="text-secondary text-center">No departments found.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Job Positions -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Job Positions</h2>
+            </div>
+            
+            <form action="{{ route('admin.settings.jobs.store') }}" method="POST" onsubmit="RaminaHR.showLoading(this)">
+                @csrf
+                <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label">New Job Title</label>
+                        <input type="text" name="name" class="form-control" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label">Department (Optional)</label>
+                        <select name="department_id" class="form-select">
+                            <option value="">-- None --</option>
+                            @foreach($departments ?? [] as $dept)
+                                <option value="{{ $dept['id'] }}">{{ $dept['name'] }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="align-self: flex-start;">Add Job Position</button>
+                </div>
+            </form>
+
+            <div style="max-height: 300px; overflow-y: auto;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Job Title</th>
+                            <th>Department</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($jobs ?? [] as $job)
+                            <tr>
+                                <td><strong>{{ $job['name'] }}</strong></td>
+                                <td>{{ is_array($job['department_id']) ? $job['department_id'][1] : '-' }}</td>
+                            </tr>
+                        @empty
+                            <tr><td colspan="2" class="text-secondary text-center">No job positions found.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection

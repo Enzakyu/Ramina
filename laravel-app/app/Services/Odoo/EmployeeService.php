@@ -143,7 +143,33 @@ class EmployeeService
      */
     public function getJobs(): array
     {
-        return $this->odoo->searchRead('hr.job', [], ['id', 'name']);
+        return $this->odoo->searchRead('hr.job', [], ['id', 'name', 'department_id']);
+    }
+
+    /**
+     * Create a new department.
+     */
+    public function createDepartment(array $data): int
+    {
+        if (empty($data['name'])) {
+            throw new OdooException('Department name is required.', 422, 'validation_error');
+        }
+        return $this->odoo->create('hr.department', ['name' => $data['name']]);
+    }
+
+    /**
+     * Create a new job position.
+     */
+    public function createJob(array $data): int
+    {
+        if (empty($data['name'])) {
+            throw new OdooException('Job position name is required.', 422, 'validation_error');
+        }
+        $values = ['name' => $data['name']];
+        if (!empty($data['department_id'])) {
+            $values['department_id'] = (int) $data['department_id'];
+        }
+        return $this->odoo->create('hr.job', $values);
     }
 
     /**

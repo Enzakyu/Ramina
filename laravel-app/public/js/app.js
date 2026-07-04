@@ -114,6 +114,21 @@ const RaminaHR = {
             this.showNotification('Leave rejected', 'success');
             setTimeout(() => window.location.reload(), 1000);
         } catch(e) {}
+    },
+
+    // Show Global Loading Overlay
+    showLoading(formElement = null) {
+        if(formElement) {
+            const btn = formElement.querySelector('button[type="submit"]');
+            if(btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<svg class="animate-spin" style="width:20px;height:20px;margin-right:8px" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="4" stroke-dasharray="32" stroke-linecap="round"></circle></svg> Loading...';
+            }
+        }
+        const overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:99999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(5px);';
+        overlay.innerHTML = '<div style="background:var(--card-bg); padding:2rem; border-radius:1rem; border:1px solid var(--glass-border); box-shadow:0 10px 40px rgba(0,0,0,0.5); display:flex; flex-direction:column; align-items:center;"><svg class="animate-spin" style="width:50px;height:50px;color:var(--primary);margin-bottom:1rem;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="4" stroke-dasharray="32" stroke-linecap="round"></circle></svg><span style="font-weight:600;color:var(--text-primary)">Processing Request...</span></div>';
+        document.body.appendChild(overlay);
     }
 };
 
