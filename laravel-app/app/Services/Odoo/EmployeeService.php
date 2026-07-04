@@ -178,6 +178,13 @@ class EmployeeService
 
         unset($data['password']);
 
+        // Odoo requires 'false' to unset many2one fields, not 'null'
+        foreach (['job_id', 'department_id', 'parent_id', 'coach_id'] as $field) {
+            if (array_key_exists($field, $data) && $data[$field] === null) {
+                $data[$field] = false;
+            }
+        }
+
         $id = $this->odoo->create('hr.employee', $data);
 
         Log::info('Employee created.', ['employee_id' => $id, 'name' => $data['name']]);
@@ -198,6 +205,13 @@ class EmployeeService
     {
         if (empty($data)) {
             return true; // Nothing to update.
+        }
+
+        // Odoo requires 'false' to unset many2one fields, not 'null'
+        foreach (['job_id', 'department_id', 'parent_id', 'coach_id'] as $field) {
+            if (array_key_exists($field, $data) && $data[$field] === null) {
+                $data[$field] = false;
+            }
         }
 
         $result = $this->odoo->write('hr.employee', [$id], $data);

@@ -196,6 +196,7 @@ class PayrollService
                 'employee_id'    => (int) $employeeId,
                 'date_from'      => $dateFrom,
                 'date_to'        => $dateTo,
+                'name'           => "Payslip {$dateFrom} to {$dateTo}",
             ];
 
             $payslipId = $this->odoo->create('hr.payslip', $values);
