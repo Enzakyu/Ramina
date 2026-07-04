@@ -75,5 +75,10 @@ Route::middleware(['odoo.auth'])->group(function () {
             Route::get('/{id}', [PayrollController::class, 'show'])->name('admin.payroll.show');
             Route::post('/{id}/confirm', [PayrollController::class, 'confirm'])->name('admin.payroll.confirm');
         });
+
+        Route::prefix('settings')->group(function () {
+            Route::get('/', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('admin.settings');
+            Route::post('/', [App\Http\Controllers\Admin\SettingController::class, 'update'])->name('admin.settings.update');
+        });
     });
 });

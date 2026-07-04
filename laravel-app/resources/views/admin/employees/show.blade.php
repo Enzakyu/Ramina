@@ -155,9 +155,15 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <label class="form-label">Work Phone</label>
-                <input type="text" name="work_phone" class="form-control" value="{{ $employee['work_phone'] ?? '' }}">
+            <div style="display: flex; gap: 1rem;">
+                <div class="form-group" style="flex:1;">
+                    <label class="form-label">Work Phone</label>
+                    <input type="text" name="work_phone" class="form-control" value="{{ $employee['work_phone'] ?? '' }}">
+                </div>
+                <div class="form-group" style="flex:1;">
+                    <label class="form-label">Basic Salary (IDR)</label>
+                    <input type="number" name="basic_salary" class="form-control" value="{{ $employee['basic_salary'] ?? '' }}" min="0">
+                </div>
             </div>
             <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:1.5rem;">
                 <button type="button" class="btn btn-outline" data-dismiss="modal">Cancel</button>

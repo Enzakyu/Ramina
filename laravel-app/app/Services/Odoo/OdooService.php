@@ -388,18 +388,9 @@ class OdooService
         }
 
         // Some endpoints (e.g. /web/session/authenticate) return result directly.
+        // Also, void methods in Odoo may return a response with neither 'result' nor 'error'.
         if (!array_key_exists('result', $decoded)) {
-            Log::error('Odoo response missing "result" key.', [
-                'endpoint' => $endpoint,
-                'keys'     => array_keys($decoded),
-            ]);
-
-            throw new OdooException(
-                message: 'Unexpected Odoo response: missing "result" key.',
-                code: 500,
-                errorData: ['response_keys' => array_keys($decoded)],
-                odooErrorType: 'unexpected_response',
-            );
+            return null;
         }
 
         return $decoded['result'];

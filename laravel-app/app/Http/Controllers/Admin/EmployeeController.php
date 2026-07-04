@@ -92,6 +92,7 @@ class EmployeeController extends Controller
             'birthday'      => 'nullable|date',
             'marital'       => 'nullable|string|in:single,married,cohabitant,widower,divorced',
             'identification_id' => 'nullable|string|max:100',
+            'basic_salary'  => 'nullable|numeric|min:0',
             'password'      => 'nullable|string|min:6',
         ]);
 
@@ -120,6 +121,7 @@ class EmployeeController extends Controller
             'birthday'      => 'nullable|date',
             'marital'       => 'nullable|string|in:single,married,cohabitant,widower,divorced',
             'identification_id' => 'nullable|string|max:100',
+            'basic_salary'  => 'nullable|numeric|min:0',
         ]);
 
         try {

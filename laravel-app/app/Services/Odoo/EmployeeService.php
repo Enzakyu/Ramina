@@ -31,6 +31,7 @@ class EmployeeService
         'pin',
         'user_id',
         'image_128',
+        'basic_salary',
     ];
 
     public function __construct(OdooService $odoo)

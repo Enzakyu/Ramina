@@ -98,6 +98,11 @@
                     <input type="text" name="password" class="form-control" placeholder="Leave empty for 'password123'">
                 </div>
             </div>
+
+            <div class="form-group">
+                <label class="form-label">Basic Salary (IDR)</label>
+                <input type="number" name="basic_salary" class="form-control" placeholder="e.g. 5000000" min="0">
+            </div>
             <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:1.5rem;">
                 <button type="button" class="btn btn-outline" data-dismiss="modal">Cancel</button>
                 <button type="submit" class="btn btn-primary">Create Employee</button>
