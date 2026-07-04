@@ -22,16 +22,17 @@ class LoginController extends Controller
     {
         $uid = request()->session()->get('odoo_uid');
         $sessionId = request()->session()->get('odoo_session_id');
+        $employeeId = request()->session()->get('employee_id');
 
         // If the user has a fully valid session, redirect to dashboard
-        if ($uid && $sessionId) {
+        if ($uid && $sessionId && $employeeId) {
             return request()->session()->get('is_admin') 
                 ? redirect()->route('admin.dashboard') 
                 : redirect()->route('employee.dashboard');
         }
 
         // If partially authenticated (which causes redirect loops), flush it
-        if ($uid || $sessionId) {
+        if ($uid || $sessionId || $employeeId) {
             request()->session()->flush();
         }
 
@@ -87,6 +88,10 @@ class LoginController extends Controller
             // Build user data
             $userName = $employee['name'] ?? ($authResult['name'] ?? 'User');
             $employeeId = $employee['id'] ?? null;
+
+            if (!$employeeId && !$isAdmin) {
+                return back()->with('error', 'Odoo authentication succeeded, but no linked Employee record was found for your account. Please contact HR.');
+            }
 
             // Store session data
             $request->session()->put('odoo_session_id', $sessionId);

@@ -59,7 +59,9 @@ class DashboardController extends Controller
                 'overtime_summary'   => $overtimeSummary,
             ]);
         } catch (\Exception $e) {
-            return back()->with('error', 'Failed to load dashboard: ' . $e->getMessage());
+            // Log the error and display it so we can debug the redirect loop!
+            \Illuminate\Support\Facades\Log::error('Dashboard Error', ['msg' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            dd($e->getMessage());
         }
     }
 }
