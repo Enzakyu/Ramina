@@ -105,7 +105,8 @@ class PayrollController extends Controller
             }
 
             return view('admin.payroll-detail', [
-                'payslip' => $payslip,
+                'payslip' => $payslip['payslip'],
+                'payslipLines' => $payslip['lines'],
             ]);
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to fetch payslip detail: ' . $e->getMessage());

@@ -14,16 +14,16 @@
             </div>
 
             @php
-                $checkedIn = $isCheckedIn ?? false;
+                $checkedIn = $status['checked_in'] ?? false;
             @endphp
 
             <div class="check-in-wrapper">
-                <button onclick="RaminaHR.toggleAttendance(this)" class="btn-check-in {{ $checkedIn ? 'is-checked-in' : '' }}">
+                <button onclick="RaminaHR.toggleAttendance(this)" class="btn-check-in {{ $checkedIn ? 'is-checked-in' : '' }}" style="width: 150px; height: 150px;">
                     @if($checkedIn)
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
+                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
                         <span>CHECK OUT</span>
                     @else
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
+                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
                         <span>CHECK IN</span>
                     @endif
                 </button>
@@ -33,7 +33,7 @@
                 Status: 
                 @if($checkedIn)
                     <span style="color: var(--warning); font-weight: 600;">Currently Checked In</span>
-                    <br>Since {{ $currentAttendance ? \Carbon\Carbon::parse($currentAttendance['check_in'])->format('H:i') : '--' }}
+                    <br>Since {{ $status['last_check_in'] ? \Carbon\Carbon::parse($status['last_check_in'])->format('H:i') : '--' }}
                 @else
                     <span style="color: var(--text-secondary); font-weight: 600;">Checked Out</span>
                 @endif

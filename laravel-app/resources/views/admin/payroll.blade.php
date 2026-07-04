@@ -103,18 +103,34 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="form-label">Employees</label>
-                <div style="max-height: 200px; overflow-y: auto; background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; border: 1px solid var(--glass-border);">
+                <label class="form-label">Employees (Search by Name)</label>
+                <input type="text" id="employeeSearchInput" class="form-control" placeholder="Type name to filter..." style="margin-bottom: 0.5rem;" onkeyup="filterEmployees()">
+                <div id="employeeList" style="max-height: 200px; overflow-y: auto; background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; border: 1px solid var(--glass-border);">
                     @foreach($employees ?? [] as $emp)
-                    <div style="margin-bottom: 0.5rem;">
+                    <div class="employee-item" style="margin-bottom: 0.5rem;">
                         <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
                             <input type="checkbox" name="employee_ids[]" value="{{ $emp['id'] }}" checked>
-                            {{ $emp['name'] }}
+                            <span class="emp-name">{{ $emp['name'] }}</span>
                         </label>
                     </div>
                     @endforeach
                 </div>
             </div>
+            
+            <script>
+            function filterEmployees() {
+                var input = document.getElementById('employeeSearchInput').value.toLowerCase();
+                var items = document.getElementsByClassName('employee-item');
+                for (var i = 0; i < items.length; i++) {
+                    var name = items[i].querySelector('.emp-name').innerText.toLowerCase();
+                    if (name.indexOf(input) > -1) {
+                        items[i].style.display = "";
+                    } else {
+                        items[i].style.display = "none";
+                    }
+                }
+            }
+            </script>
             <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:1.5rem;">
                 <button type="button" class="btn btn-outline" data-dismiss="modal">Cancel</button>
                 <button type="submit" class="btn btn-primary">Generate Payslips</button>
