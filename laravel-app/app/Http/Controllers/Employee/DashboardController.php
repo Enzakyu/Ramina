@@ -52,11 +52,29 @@ class DashboardController extends Controller
                 $now->endOfMonth()->toDateString()
             );
 
+            // Fetch recent activity and today's hours
+            $today = $now->toDateString();
+            $lastWeek = $now->copy()->subDays(7)->toDateString();
+            
+            // Recent activity is last 7 days
+            $recentActivity = $this->attendanceService->getAttendanceHistory($employeeId, $lastWeek, $today);
+            
+            // Today's hours is just from today
+            $todayHours = 0;
+            foreach ($recentActivity as $act) {
+                // If it's today's record, add to todayHours
+                if (str_starts_with($act['check_in'], $today)) {
+                    $todayHours += $act['worked_hours'] ?? 0;
+                }
+            }
+
             return view('employee.dashboard', [
                 'employee'           => $employee,
-                'attendance_status'  => $attendanceStatus,
-                'pending_leaves'     => $pendingLeavesCount,
-                'overtime_summary'   => $overtimeSummary,
+                'attendanceStatus'   => $attendanceStatus,
+                'pendingLeaves'      => $pendingLeavesCount,
+                'overtimeSummary'    => $overtimeSummary,
+                'todayHours'         => $todayHours,
+                'recentActivity'     => $recentActivity,
             ]);
         } catch (\Exception $e) {
             // Log the error and display it so we can debug the redirect loop!

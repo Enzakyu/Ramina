@@ -14,7 +14,7 @@
             <button onclick="window.print()" class="btn btn-outline">Print</button>
             
             @if(($payslip['state'] ?? '') === 'draft' || ($payslip['state'] ?? '') === 'verify')
-            <form action="{{ route('admin.payroll.show', $payslip['id']) }}" method="POST" style="display:inline;">
+            <form action="{{ route('admin.payroll.confirm', $payslip['id']) }}" method="POST" style="display:inline;">
                 @csrf
                 <button type="submit" class="btn btn-primary">Confirm & Mark as Done</button>
             </form>
