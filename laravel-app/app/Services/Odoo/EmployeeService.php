@@ -176,6 +176,29 @@ class EmployeeService
     }
 
     /**
+     * Update an existing job position.
+     */
+    public function updateJob(int $id, array $data): bool
+    {
+        $values = [];
+        if (!empty($data['name'])) {
+            $values['name'] = $data['name'];
+        }
+        if (array_key_exists('department_id', $data)) {
+            $values['department_id'] = $data['department_id'] ? (int) $data['department_id'] : false;
+        }
+        if (array_key_exists('basic_salary', $data)) {
+            $values['x_basic_salary'] = $data['basic_salary'] !== null ? (float) $data['basic_salary'] : 0.0;
+        }
+        
+        if (empty($values)) {
+            return true;
+        }
+
+        return $this->odoo->write('hr.job', [$id], $values);
+    }
+
+    /**
      * Create a new employee record.
      *
      * @param array $data Field values for the new employee. Example keys:

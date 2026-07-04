@@ -81,6 +81,7 @@ Route::middleware(['odoo.auth'])->group(function () {
             Route::post('/', [App\Http\Controllers\Admin\SettingController::class, 'update'])->name('admin.settings.update');
             Route::post('/departments', [App\Http\Controllers\Admin\SettingController::class, 'storeDepartment'])->name('admin.settings.departments.store');
             Route::post('/jobs', [App\Http\Controllers\Admin\SettingController::class, 'storeJob'])->name('admin.settings.jobs.store');
+            Route::put('/jobs/{id}', [App\Http\Controllers\Admin\SettingController::class, 'updateJob'])->name('admin.settings.jobs.update');
         });
     });
 });

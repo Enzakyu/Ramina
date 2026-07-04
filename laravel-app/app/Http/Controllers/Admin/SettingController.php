@@ -66,4 +66,20 @@ class SettingController extends Controller
             return back()->with('error', 'Failed to create job position: ' . $e->getMessage());
         }
     }
+
+    public function updateJob(Request $request, int $id)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'department_id' => 'nullable|integer',
+            'basic_salary' => 'nullable|numeric|min:0',
+        ]);
+
+        try {
+            $this->employeeService->updateJob($id, $validated);
+            return back()->with('success', 'Job position updated successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to update job position: ' . $e->getMessage());
+        }
+    }
 }

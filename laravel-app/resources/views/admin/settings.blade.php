@@ -110,6 +110,7 @@
                             <th>Job Title</th>
                             <th>Department</th>
                             <th>Base Salary</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -118,9 +119,15 @@
                                 <td><strong>{{ $job['name'] }}</strong></td>
                                 <td>{{ is_array($job['department_id']) ? $job['department_id'][1] : '-' }}</td>
                                 <td>{{ isset($job['x_basic_salary']) && $job['x_basic_salary'] > 0 ? 'Rp ' . number_format($job['x_basic_salary'], 0, ',', '.') : '-' }}</td>
+                                <td>
+                                    <button class="btn btn-outline" style="padding: 0.2rem 0.5rem; font-size: 0.8rem;" data-toggle="modal" data-target="#editJobModal" 
+                                        onclick="editJob({{ $job['id'] }}, '{{ addslashes($job['name']) }}', '{{ is_array($job['department_id']) ? $job['department_id'][0] : '' }}', '{{ $job['x_basic_salary'] ?? '' }}')">
+                                        Edit
+                                    </button>
+                                </td>
                             </tr>
                         @empty
-                            <tr><td colspan="3" class="text-secondary text-center">No job positions found.</td></tr>
+                            <tr><td colspan="4" class="text-secondary text-center">No job positions found.</td></tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -128,4 +135,50 @@
         </div>
     </div>
 </div>
+
+<!-- Edit Job Modal -->
+<div class="modal-backdrop" id="editJobModal">
+    <div class="modal">
+        <div class="card-header">
+            <h3 class="card-title">Edit Job Position</h3>
+            <button class="btn btn-outline" style="padding: 0.2rem 0.5rem;" data-dismiss="modal">&times;</button>
+        </div>
+        <form id="editJobForm" method="POST" onsubmit="RaminaHR.showLoading(this)">
+            @csrf
+            @method('PUT')
+            <div class="form-group">
+                <label class="form-label">Job Title</label>
+                <input type="text" name="name" id="editJobName" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Department</label>
+                <select name="department_id" id="editJobDept" class="form-select">
+                    <option value="">-- None --</option>
+                    @foreach($departments ?? [] as $dept)
+                        <option value="{{ $dept['id'] }}">{{ $dept['name'] }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Base Salary</label>
+                <input type="number" name="basic_salary" id="editJobSalary" class="form-control" step="1" min="0">
+            </div>
+            <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:1.5rem;">
+                <button type="button" class="btn btn-outline" data-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@push('scripts')
+<script>
+function editJob(id, name, deptId, salary) {
+    document.getElementById('editJobForm').action = '/admin/settings/jobs/' + id;
+    document.getElementById('editJobName').value = name;
+    document.getElementById('editJobDept').value = deptId || '';
+    document.getElementById('editJobSalary').value = salary && salary !== '0' ? salary : '';
+}
+</script>
+@endpush
 @endsection
