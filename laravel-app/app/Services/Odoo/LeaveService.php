@@ -140,13 +140,19 @@ class LeaveService
      *
      * @throws OdooException
      */
-    public function getPendingLeaves(): array
+    public function getPendingLeaves(?int $employeeId = null): array
     {
+        $domain = [
+            ['state', '=', 'confirm'],
+        ];
+
+        if ($employeeId !== null) {
+            $domain[] = ['employee_id', '=', $employeeId];
+        }
+
         return $this->odoo->searchRead(
             model: 'hr.leave',
-            domain: [
-                ['state', '=', 'confirm'],
-            ],
+            domain: $domain,
             fields: [
                 'id',
                 'employee_id',
