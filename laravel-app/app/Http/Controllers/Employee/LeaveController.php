@@ -62,7 +62,7 @@ class LeaveController extends Controller
                 $validated['leave_type_id'],
                 $validated['date_from'],
                 $validated['date_to'],
-                $validated['description'] ?? null
+                $validated['description'] ?? ''
             );
 
             return back()->with('success', 'Leave request submitted successfully.');

@@ -51,7 +51,10 @@ class PayslipController extends Controller
                 return redirect()->route('employee.payslips')->with('error', 'Payslip not found.');
             }
 
-            return view('employee.payslip-detail', ['payslip' => $payslip]);
+            return view('employee.payslip-detail', [
+                'payslip' => $payslip['payslip'],
+                'payslipLines' => $payslip['lines'],
+            ]);
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to fetch payslip detail: ' . $e->getMessage());
         }
