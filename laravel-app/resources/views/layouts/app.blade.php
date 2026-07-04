@@ -65,9 +65,9 @@
         </nav>
         
         <div class="sidebar-footer">
-            <div class="avatar">{{ substr(session('odoo_user_name', 'U'), 0, 1) }}</div>
+            <div class="avatar">{{ substr(session('user_name', 'U'), 0, 1) }}</div>
             <div class="user-info">
-                <div class="user-name">{{ session('odoo_user_name', 'User') }}</div>
+                <div class="user-name">{{ session('user_name', 'User') }}</div>
                 <div class="user-role">{{ session('is_admin') ? 'HR Admin' : 'Employee' }}</div>
             </div>
             <form action="{{ route('logout') }}" method="POST">
