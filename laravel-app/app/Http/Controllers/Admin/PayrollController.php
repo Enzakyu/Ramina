@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Services\Odoo\PayrollService;
+use App\Services\Odoo\EmployeeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -11,6 +12,7 @@ class PayrollController extends Controller
 {
     public function __construct(
         protected PayrollService $payrollService,
+        protected EmployeeService $employeeService,
     ) {}
 
     /**
@@ -38,9 +40,11 @@ class PayrollController extends Controller
             }
 
             $payslips = $this->payrollService->getAllPayslips($dateFrom, $dateTo);
+            $employees = $this->employeeService->getAllEmployees();
 
             return view('admin.payroll', [
                 'payslips' => $payslips,
+                'employees' => $employees,
             ]);
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to fetch payslips: ' . $e->getMessage());

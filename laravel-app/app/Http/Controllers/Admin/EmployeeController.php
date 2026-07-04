@@ -61,10 +61,15 @@ class EmployeeController extends Controller
             // Fetch recent payslips
             $recentPayslips = $payrollService->getPayslips($id);
 
+            $departments = $this->employeeService->getDepartments();
+            $jobs = $this->employeeService->getJobs();
+
             return view('admin.employees.show', [
                 'employee'          => $employee,
                 'attendanceSummary' => $attendanceSummary,
                 'recentPayslips'    => $recentPayslips,
+                'departments'       => $departments,
+                'jobs'              => $jobs,
             ]);
         } catch (\Exception $e) {
             return redirect()->route('admin.employees')->with('error', 'Failed to fetch employee: ' . $e->getMessage());
@@ -107,7 +112,7 @@ class EmployeeController extends Controller
         $validated = $request->validate([
             'name'          => 'sometimes|required|string|max:255',
             'work_email'    => 'nullable|email|max:255',
-            'job_title'     => 'nullable|string|max:255',
+            'job_id'        => 'nullable|integer',
             'department_id' => 'nullable|integer',
             'work_phone'    => 'nullable|string|max:50',
             'mobile_phone'  => 'nullable|string|max:50',

@@ -133,6 +133,28 @@
                 <label class="form-label">Work Email</label>
                 <input type="email" name="work_email" class="form-control" value="{{ $employee['work_email'] ?? '' }}">
             </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <div class="form-group" style="flex:1;">
+                    <label class="form-label">Job Position</label>
+                    <select name="job_id" class="form-select">
+                        <option value="">Select Job Position...</option>
+                        @foreach($jobs ?? [] as $job)
+                            <option value="{{ $job['id'] }}" {{ isset($employee['job_id']) && is_array($employee['job_id']) && $employee['job_id'][0] == $job['id'] ? 'selected' : '' }}>{{ $job['name'] }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group" style="flex:1;">
+                    <label class="form-label">Department</label>
+                    <select name="department_id" class="form-select">
+                        <option value="">Select Department...</option>
+                        @foreach($departments ?? [] as $dept)
+                            <option value="{{ $dept['id'] }}" {{ isset($employee['department_id']) && is_array($employee['department_id']) && $employee['department_id'][0] == $dept['id'] ? 'selected' : '' }}>{{ $dept['name'] }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label class="form-label">Work Phone</label>
                 <input type="text" name="work_phone" class="form-control" value="{{ $employee['work_phone'] ?? '' }}">
