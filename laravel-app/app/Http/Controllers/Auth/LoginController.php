@@ -66,8 +66,8 @@ class LoginController extends Controller
             // so that subsequent execute_kw calls authenticate as the logged-in user
             $this->odooService->setApiKey($validated['password']);
 
-            // Fetch employee record linked to this Odoo user
-            $employee = $this->employeeService->getEmployeeByUserId($uid);
+            // Fetch employee record linked to this Odoo user, requesting only public fields
+            $employee = $this->employeeService->getEmployeeByUserId($uid, ['id', 'name']);
 
             // Determine admin status by checking HR Manager group membership
             $isAdmin = $this->checkAdminGroup($uid);

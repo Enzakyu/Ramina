@@ -40,6 +40,20 @@ class EmployeeService
     }
 
     /**
+     * Get default fields based on user role to prevent AccessErrors.
+     */
+    protected function getDefaultFields(): array
+    {
+        $fields = $this->defaultFields;
+        if (!request()->session()->get('is_admin')) {
+            // Employees don't have access to these HR fields
+            $restricted = ['employee_type', 'identification_id', 'barcode', 'pin', 'basic_salary'];
+            $fields = array_values(array_diff($fields, $restricted));
+        }
+        return $fields;
+    }
+
+    /**
      * Get a single employee record by ID.
      *
      * @param int        $id     Odoo hr.employee record ID.
@@ -53,7 +67,7 @@ class EmployeeService
         $records = $this->odoo->searchRead(
             model: 'hr.employee',
             domain: [['id', '=', $id]],
-            fields: $fields ?? $this->defaultFields,
+            fields: $fields ?? $this->getDefaultFields(),
         );
 
         if (empty($records)) {
@@ -78,12 +92,12 @@ class EmployeeService
      *
      * @throws OdooException
      */
-    public function getEmployeeByUserId(int $uid): ?array
+    public function getEmployeeByUserId(int $uid, ?array $fields = null): ?array
     {
         $records = $this->odoo->searchRead(
             model: 'hr.employee',
             domain: [['user_id', '=', $uid]],
-            fields: $this->defaultFields,
+            fields: $fields ?? $this->defaultFields,
             options: [
                 'limit' => 1,
             ],
@@ -107,7 +121,7 @@ class EmployeeService
         return $this->odoo->searchRead(
             model: 'hr.employee',
             domain: $domain,
-            fields: $this->defaultFields,
+            fields: $this->getDefaultFields(),
             options: [
                 'limit'  => $limit,
                 'offset' => $offset,
