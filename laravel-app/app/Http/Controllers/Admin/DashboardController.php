@@ -54,9 +54,7 @@ class DashboardController extends Controller
 
             // Payroll This Month
             $payrollService = app(\App\Services\Odoo\PayrollService::class);
-            $dateFrom = date('Y-m-01');
-            $dateTo = date('Y-m-t');
-            $payslips = $payrollService->getAllPayslips($dateFrom, $dateTo);
+            $payslips = $payrollService->getAllPayslips((int)date('m'), (int)date('Y'));
             $payrollTotal = 0;
             foreach ($payslips as $slip) {
                 $payrollTotal += $slip['net_wage'] ?? 0;
