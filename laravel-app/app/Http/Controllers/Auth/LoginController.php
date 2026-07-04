@@ -20,18 +20,18 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        $hasUid = request()->session()->has('odoo_uid');
-        $hasSessionId = request()->session()->has('odoo_session_id');
+        $uid = request()->session()->get('odoo_uid');
+        $sessionId = request()->session()->get('odoo_session_id');
 
         // If the user has a fully valid session, redirect to dashboard
-        if ($hasUid && $hasSessionId) {
+        if ($uid && $sessionId) {
             return request()->session()->get('is_admin') 
                 ? redirect()->route('admin.dashboard') 
                 : redirect()->route('employee.dashboard');
         }
 
         // If partially authenticated (which causes redirect loops), flush it
-        if ($hasUid || $hasSessionId) {
+        if ($uid || $sessionId) {
             request()->session()->flush();
         }
 
@@ -67,10 +67,12 @@ class LoginController extends Controller
             $uid = $authResult['uid'];
             $sessionId = $authResult['session_id'] ?? null;
 
-            // Restore session on the service so subsequent calls work
-            if ($sessionId) {
-                $this->odooService->setSession($sessionId, $uid);
+            if (!$sessionId) {
+                return back()->with('error', 'Odoo authentication succeeded, but failed to retrieve session ID. Please try again.');
             }
+
+            // Restore session on the service so subsequent calls work
+            $this->odooService->setSession($sessionId, $uid);
             
             // Crucial: We must override the API key for the current request
             // so that subsequent execute_kw calls authenticate as the logged-in user
