@@ -82,18 +82,26 @@ class AttendanceService
     {
         Log::info('Toggling attendance.', ['employee_id' => $employeeId]);
 
-        $result = $this->odoo->callMethod(
-            model: 'hr.employee',
-            method: 'attendance_manual',
-            args: [[$employeeId], false],
-        );
+        // Get current status
+        $status = $this->getAttendanceStatus($employeeId);
+        $now = \Carbon\Carbon::now('UTC')->format('Y-m-d H:i:s');
 
-        Log::info('Attendance toggled.', [
-            'employee_id' => $employeeId,
-            'result'      => is_array($result) ? array_keys($result) : $result,
-        ]);
-
-        return $result;
+        if ($status['checked_in'] && $status['attendance_id']) {
+            // Check out
+            $result = $this->odoo->write('hr.attendance', [$status['attendance_id']], [
+                'check_out' => $now
+            ]);
+            Log::info('Attendance checked out.', ['employee_id' => $employeeId]);
+            return $result;
+        } else {
+            // Check in
+            $result = $this->odoo->create('hr.attendance', [
+                'employee_id' => $employeeId,
+                'check_in' => $now
+            ]);
+            Log::info('Attendance checked in.', ['employee_id' => $employeeId]);
+            return $result;
+        }
     }
 
     /**
