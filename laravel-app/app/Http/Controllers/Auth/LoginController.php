@@ -20,11 +20,21 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        if (request()->session()->has('odoo_uid')) {
+        $hasUid = request()->session()->has('odoo_uid');
+        $hasSessionId = request()->session()->has('odoo_session_id');
+
+        // If the user has a fully valid session, redirect to dashboard
+        if ($hasUid && $hasSessionId) {
             return request()->session()->get('is_admin') 
                 ? redirect()->route('admin.dashboard') 
                 : redirect()->route('employee.dashboard');
         }
+
+        // If partially authenticated (which causes redirect loops), flush it
+        if ($hasUid || $hasSessionId) {
+            request()->session()->flush();
+        }
+
         return view('auth.login');
     }
 

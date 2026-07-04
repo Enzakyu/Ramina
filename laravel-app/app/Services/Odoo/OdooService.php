@@ -420,12 +420,9 @@ class OdooService
         }
 
         // 2. Fallback: read from the cookie jar.
-        $parsedUrl = parse_url($this->url);
-        $domain    = $parsedUrl['host'] ?? 'localhost';
-
-        /** @var SetCookie $cookie */
         foreach ($this->cookieJar->toArray() as $cookie) {
-            if (($cookie['Name'] ?? '') === 'session_id') {
+            // Guzzle CookieJar->toArray() returns an array of arrays with keys like 'Name', 'Value'
+            if (isset($cookie['Name']) && $cookie['Name'] === 'session_id') {
                 return $cookie['Value'] ?? null;
             }
         }
