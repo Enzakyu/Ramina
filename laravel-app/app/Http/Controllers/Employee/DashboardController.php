@@ -52,18 +52,20 @@ class DashboardController extends Controller
                 $now->endOfMonth()->toDateString()
             );
 
-            // Fetch recent activity and today's hours
-            $today = $now->toDateString();
-            $lastWeek = $now->copy()->subDays(7)->toDateString();
+            // Fetch recent activity (last 7 days)
+            $todayWIB = Carbon::now('Asia/Jakarta');
+            $todayStr = $todayWIB->toDateString();
+            $lastWeekStr = $todayWIB->copy()->subDays(7)->toDateString();
             
-            // Recent activity is last 7 days
-            $recentActivity = $this->attendanceService->getAttendanceHistory($employeeId, $lastWeek, $today);
+            $recentActivity = $this->attendanceService->getAttendanceHistory($employeeId, $lastWeekStr, $todayStr);
             
-            // Today's hours is just from today
+            // Today's hours is just from today (checking if the UTC check_in falls into today WIB)
+            $todayStartUTC = $todayWIB->copy()->startOfDay()->setTimezone('UTC')->format('Y-m-d H:i:s');
+            
             $todayHours = 0;
             foreach ($recentActivity as $act) {
-                // If it's today's record, add to todayHours
-                if (str_starts_with($act['check_in'], $today)) {
+                // If the UTC check_in is on or after today's start in UTC, it counts as today
+                if ($act['check_in'] >= $todayStartUTC) {
                     $todayHours += $act['worked_hours'] ?? 0;
                 }
             }

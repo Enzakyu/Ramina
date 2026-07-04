@@ -19,10 +19,26 @@ class LeaveApprovalController extends Controller
     public function pending(Request $request)
     {
         try {
-            $pendingLeaves = $this->leaveService->getPendingLeaves();
+            $filter = $request->query('filter', 'confirm');
+
+            // Let's just use OdooService to searchRead all leaves depending on filter
+            $domain = [];
+            if ($filter !== 'all') {
+                $domain[] = ['state', '=', $filter];
+            }
+
+            $leaves = app(\App\Services\Odoo\OdooService::class)->searchRead(
+                model: 'hr.leave',
+                domain: $domain,
+                fields: [
+                    'id', 'employee_id', 'holiday_status_id', 'date_from', 'date_to', 'number_of_days', 'state', 'name'
+                ],
+                options: ['order' => 'date_from desc']
+            );
 
             return view('admin.leaves', [
-                'leaves' => $pendingLeaves,
+                'leaveRequests' => $leaves,
+                'filter' => $filter,
             ]);
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to fetch pending leaves: ' . $e->getMessage());

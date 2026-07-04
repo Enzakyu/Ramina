@@ -150,7 +150,8 @@ class AttendanceService
      */
     public function getAllAttendanceToday(): array
     {
-        $todayStart = Carbon::today('UTC')->format('Y-m-d H:i:s');
+        // Start of today in local timezone (e.g. Asia/Jakarta) converted to UTC
+        $todayStart = Carbon::now('Asia/Jakarta')->startOfDay()->setTimezone('UTC')->format('Y-m-d H:i:s');
 
         $domain = [
             ['check_in', '>=', $todayStart],
