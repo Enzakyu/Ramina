@@ -72,10 +72,10 @@
                         <div class="timeline-item">
                             <div class="timeline-dot"></div>
                             <div class="timeline-content">
-                                <strong>{{ \Carbon\Carbon::parse($act['check_in'])->format('d M Y') }}</strong>
+                                <strong>{{ \Carbon\Carbon::parse($act['check_in'])->setTimezone('Asia/Jakarta')->format('d M Y') }}</strong>
                                 <p style="margin-top:0.5rem; font-size:0.9rem; color:var(--text-secondary);">
-                                    Check In: {{ \Carbon\Carbon::parse($act['check_in'])->format('H:i') }} <br>
-                                    Check Out: {{ $act['check_out'] ? \Carbon\Carbon::parse($act['check_out'])->format('H:i') : 'Active' }} <br>
+                                    Check In: {{ \Carbon\Carbon::parse($act['check_in'])->setTimezone('Asia/Jakarta')->format('H:i') }} <br>
+                                    Check Out: {{ $act['check_out'] ? \Carbon\Carbon::parse($act['check_out'])->setTimezone('Asia/Jakarta')->format('H:i') : 'Active' }} <br>
                                     Hours: {{ number_format($act['worked_hours'] ?? 0, 1) }}h
                                 </p>
                             </div>
