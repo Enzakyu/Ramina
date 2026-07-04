@@ -96,9 +96,25 @@ class EmployeeController extends Controller
             'password'      => 'nullable|string|min:6',
         ]);
 
+        // Cast Many2one fields to integer for Odoo JSON-RPC
+        if (isset($validated['job_id']) && $validated['job_id'] !== null && $validated['job_id'] !== '') {
+            $validated['job_id'] = (int) $validated['job_id'];
+        } else {
+            $validated['job_id'] = false;
+        }
+
+        if (isset($validated['department_id']) && $validated['department_id'] !== null && $validated['department_id'] !== '') {
+            $validated['department_id'] = (int) $validated['department_id'];
+        } else {
+            $validated['department_id'] = false;
+        }
+
+        if (isset($validated['basic_salary']) && $validated['basic_salary'] !== null && $validated['basic_salary'] !== '') {
+            $validated['basic_salary'] = (float) $validated['basic_salary'];
+        }
+
         try {
             $result = $this->employeeService->createEmployee($validated);
-
             return back()->with('success', 'Employee created successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to create employee: ' . $e->getMessage());
@@ -123,6 +139,23 @@ class EmployeeController extends Controller
             'identification_id' => 'nullable|string|max:100',
             'basic_salary'  => 'nullable|numeric|min:0',
         ]);
+
+        // Cast Many2one fields to integer for Odoo JSON-RPC
+        if (isset($validated['job_id']) && $validated['job_id'] !== null && $validated['job_id'] !== '') {
+            $validated['job_id'] = (int) $validated['job_id'];
+        } else {
+            $validated['job_id'] = false;
+        }
+
+        if (isset($validated['department_id']) && $validated['department_id'] !== null && $validated['department_id'] !== '') {
+            $validated['department_id'] = (int) $validated['department_id'];
+        } else {
+            $validated['department_id'] = false;
+        }
+
+        if (isset($validated['basic_salary']) && $validated['basic_salary'] !== null && $validated['basic_salary'] !== '') {
+            $validated['basic_salary'] = (float) $validated['basic_salary'];
+        }
 
         try {
             $this->employeeService->updateEmployee($id, $validated);
