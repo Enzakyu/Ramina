@@ -54,10 +54,10 @@
             <field name="responsible_ids" eval="[(4, ref('base.user_admin'))]"/>
         </record>
 
-        <!-- Personal Leave: 5 days per year -->
-        <record id="hr_leave_type_personal" model="hr.leave.type">
-            <field name="name">Personal Leave</field>
-            <field name="requires_allocation">yes</field>
+        <!-- Maternity Leave: Request based -->
+        <record id="hr_leave_type_maternity" model="hr.leave.type">
+            <field name="name">Maternity Leave</field>
+            <field name="requires_allocation">no</field>
             <field name="employee_requests">yes</field>
             <field name="allocation_validation_type">hr</field>
             <field name="leave_validation_type">hr</field>

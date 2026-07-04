@@ -7,6 +7,7 @@ use App\Services\Odoo\AttendanceService;
 use App\Services\Odoo\EmployeeService;
 use App\Services\Odoo\LeaveService;
 use App\Services\Odoo\OvertimeService;
+use App\Services\Odoo\HRFeaturesService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -70,6 +71,10 @@ class DashboardController extends Controller
                 }
             }
 
+            // Fetch Announcements
+            $hrService = app(HRFeaturesService::class);
+            $announcements = $hrService->getAnnouncements();
+
             return view('employee.dashboard', [
                 'employee'           => $employee,
                 'attendanceStatus'   => $attendanceStatus,
@@ -77,6 +82,7 @@ class DashboardController extends Controller
                 'overtimeSummary'    => $overtimeSummary,
                 'todayHours'         => $todayHours,
                 'recentActivity'     => $recentActivity,
+                'announcements'      => $announcements,
             ]);
         } catch (\Exception $e) {
             // Log the error and display it so we can debug the redirect loop!

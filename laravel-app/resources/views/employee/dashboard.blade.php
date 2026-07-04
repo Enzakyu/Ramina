@@ -61,6 +61,29 @@
             </div>
         </div>
 
+        <!-- Announcements Widget -->
+        <div class="card animate-fade-in delay-2">
+            <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 class="card-title">Company Announcements</h3>
+                <span class="badge bg-primary">{{ count($announcements ?? []) }} New</span>
+            </div>
+            <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                @forelse($announcements ?? [] as $announcement)
+                    <div style="padding: 1rem; border-left: 4px solid var(--primary); background: rgba(0,0,0,0.02); margin-bottom: 1rem; border-radius: 4px;">
+                        <div style="display:flex; justify-content:space-between;">
+                            <strong style="font-weight: 600;">{{ $announcement['title'] }}</strong>
+                            <small style="color:var(--text-secondary)">{{ \Carbon\Carbon::parse($announcement['date'])->format('d M') }}</small>
+                        </div>
+                        <p style="margin-top:0.5rem; font-size:0.95rem; color:var(--text-secondary); line-height: 1.5;">
+                            {!! nl2br(e($announcement['content'])) !!}
+                        </p>
+                    </div>
+                @empty
+                    <p class="text-secondary text-center py-4">No announcements at this time.</p>
+                @endforelse
+            </div>
+        </div>
+
         <!-- Recent Activity Timeline -->
         <div class="card animate-fade-in delay-3">
             <div class="card-header">

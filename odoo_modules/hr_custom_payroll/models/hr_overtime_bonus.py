@@ -106,6 +106,19 @@ class HrOvertimeBonus(models.Model):
     )
 
 
+    tardiness_penalty = fields.Monetary(
+        string='Tardiness Penalty',
+        currency_field='currency_id',
+        default=0.0,
+        help='Penalty for checking in late (past 09:00)',
+    )
+    attendance_allowance = fields.Monetary(
+        string='Attendance Allowance',
+        currency_field='currency_id',
+        default=0.0,
+        help='Daily allowance for showing up and working minimum hours',
+    )
+    
     # -------------------------------------------------------------------------
     # Compute Methods
     # -------------------------------------------------------------------------
@@ -161,21 +174,21 @@ class HrOvertimeBonus(models.Model):
     def _cron_compute_overtime(self):
         """
         Daily cron job: scans yesterday's attendance records and creates
-        overtime bonus records for employees who:
-        - Checked out after 17:00 (5 PM), OR
-        - Worked more than 8 hours total
-
-        Only creates records if overtime hours > 0 (worked_hours > standard 8.0).
-        Skips if an overtime record already exists for the same employee + attendance.
+        settlement records for employees.
+        Includes: Overtime, Tardiness Penalty, and Daily Allowance.
         """
         yesterday = fields.Date.context_today(self) - timedelta(days=1)
         day_start = datetime.combine(yesterday, time(0, 0, 0))
         day_end = datetime.combine(yesterday + timedelta(days=1), time(0, 0, 0))
 
         std_hours = float(self.env['ir.config_parameter'].sudo().get_param('ramina.standard_hours', default='8.0'))
+        
+        # Hardcoded policies for now (can be moved to config later)
+        daily_allowance_rate = 50000.0  # Rp 50.000 per day
+        tardiness_per_minute = 1000.0   # Rp 1.000 per minute late
 
         _logger.info(
-            'Overtime Cron: Scanning attendance records for %s with standard hours %s', yesterday, std_hours
+            'Daily Settlement Cron: Scanning attendance records for %s', yesterday
         )
 
         # Fetch all completed attendance records for yesterday
@@ -187,7 +200,7 @@ class HrOvertimeBonus(models.Model):
 
         created_count = 0
         for att in attendances:
-            # Skip if overtime record already exists for this attendance
+            # Skip if record already exists for this attendance
             existing = self.search([
                 ('employee_id', '=', att.employee_id.id),
                 ('attendance_id', '=', att.id),
@@ -195,20 +208,27 @@ class HrOvertimeBonus(models.Model):
             if existing:
                 continue
 
-            # Determine if this qualifies as overtime
             worked = att.worked_hours or 0.0
-            if worked <= std_hours:
-                # Also check if check_out time is past 17:00 in employee's timezone
-                check_out_local = fields.Datetime.context_timestamp(
-                    att.employee_id, att.check_out
-                )
-                if check_out_local.hour < 17:
-                    continue
-                # Even if checked out after 17:00, only create if actual overtime exists
-                if worked <= std_hours:
-                    continue
+            
+            # Calculate Tardiness
+            tardiness_penalty = 0.0
+            check_in_local = fields.Datetime.context_timestamp(att.employee_id, att.check_in)
+            # If check_in is past 09:00 AM
+            if check_in_local.hour >= 9:
+                minutes_late = (check_in_local.hour - 9) * 60 + check_in_local.minute
+                if minutes_late > 0:
+                    tardiness_penalty = minutes_late * tardiness_per_minute
 
-            # Create overtime bonus record
+            # Calculate Allowance (must work at least 4 hours to get meal/transport)
+            allowance = daily_allowance_rate if worked >= 4.0 else 0.0
+
+            # Only create if there's *some* financial impact (overtime, penalty, or allowance)
+            has_impact = (worked > std_hours) or (tardiness_penalty > 0) or (allowance > 0)
+            
+            if not has_impact:
+                continue
+
+            # Create settlement record
             self.create({
                 'employee_id': att.employee_id.id,
                 'date': yesterday,
@@ -217,6 +237,8 @@ class HrOvertimeBonus(models.Model):
                 'worked_hours': worked,
                 'standard_hours': std_hours,
                 'attendance_id': att.id,
+                'tardiness_penalty': tardiness_penalty,
+                'attendance_allowance': allowance,
                 'state': 'draft',
             })
             created_count += 1

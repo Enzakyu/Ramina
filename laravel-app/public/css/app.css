@@ -500,3 +500,4 @@ textarea.form-control { resize: vertical; min-height: 100px; }
     box-shadow: var(--shadow-md);
     border: 1px solid var(--border-color);
 }
+@media print { body { background: white; color: black; } .sidebar, .top-bar, .btn { display: none !important; } .main-content { margin: 0 !important; } .print-area { box-shadow: none !important; border: none !important; } }
