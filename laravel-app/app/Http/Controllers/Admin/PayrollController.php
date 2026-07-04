@@ -42,9 +42,15 @@ class PayrollController extends Controller
             $payslips = $this->payrollService->getAllPayslips($dateFrom, $dateTo);
             $employees = $this->employeeService->getAllEmployees();
 
+            $totalNet = 0;
+            foreach ($payslips as $slip) {
+                $totalNet += $slip['net_wage'] ?? 0;
+            }
+
             return view('admin.payroll', [
                 'payslips' => $payslips,
                 'employees' => $employees,
+                'totals' => ['net' => $totalNet],
             ]);
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to fetch payslips: ' . $e->getMessage());

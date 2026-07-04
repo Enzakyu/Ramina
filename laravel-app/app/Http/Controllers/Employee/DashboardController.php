@@ -53,7 +53,7 @@ class DashboardController extends Controller
             );
 
             // Fetch recent activity (last 7 days)
-            $todayWIB = Carbon::now('Asia/Jakarta');
+            $todayWIB = \Carbon\Carbon::now('Asia/Jakarta');
             $todayStr = $todayWIB->toDateString();
             $lastWeekStr = $todayWIB->copy()->subDays(7)->toDateString();
             
