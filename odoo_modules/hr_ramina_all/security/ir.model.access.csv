@@ -9,8 +9,8 @@ access_hr_attendance_base_user,hr.attendance.base.user,hr_attendance.model_hr_at
 access_hr_attendance_overtime_line_base_user,hr.attendance.overtime.line.base.user,hr_attendance.model_hr_attendance_overtime_line,base.group_user,1,1,1,1
 access_hr_attendance_overtime_rule_base_user,hr.attendance.overtime.rule.base.user,hr_attendance.model_hr_attendance_overtime_rule,base.group_user,1,1,1,0
 access_hr_attendance_overtime_ruleset_base_user,hr.attendance.overtime.ruleset.base.user,hr_attendance.model_hr_attendance_overtime_ruleset,base.group_user,1,1,1,0
-access_hr_payslip_base_user,hr.payslip.base.user,hr_payroll.model_hr_payslip,base.group_user,1,0,0,0
-access_hr_payslip_line_base_user,hr.payslip.line.base.user,hr_payroll.model_hr_payslip_line,base.group_user,1,0,0,0
+access_hr_payslip_base_user,hr.payslip.base.user,hr_custom_payroll.model_hr_payslip,base.group_user,1,0,0,0
+access_hr_payslip_line_base_user,hr.payslip.line.base.user,hr_custom_payroll.model_hr_payslip_line,base.group_user,1,0,0,0
 access_hr_overtime_bonus_base_user,hr.overtime.bonus.base.user,hr_custom_payroll.model_hr_overtime_bonus,base.group_user,1,0,0,0
 access_hr_compensation_base_user,hr.compensation.base.user,model_hr_compensation,base.group_user,1,1,1,1
 access_hr_compensation_hr_admin,hr.compensation.hr.admin,model_hr_compensation,hr_ramina_all.ramina_group_hr_admin,1,1,1,1
