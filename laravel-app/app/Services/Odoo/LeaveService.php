@@ -31,7 +31,9 @@ class LeaveService
     {
         return $this->odoo->searchRead(
             model: 'hr.leave.type',
-            domain: [],
+            domain: [
+                ['name', 'in', ['Annual Leave', 'Sick Leave', 'Maternity Leave']]
+            ],
             fields: [
                 'id',
                 'name',

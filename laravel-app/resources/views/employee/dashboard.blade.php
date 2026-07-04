@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="animate-fade-in">
-    <h2 style="margin-bottom: 2rem; font-weight: 300;">Good day, <span style="color: var(--primary); font-weight: 600;">{{ session('odoo_user_name', 'Employee') }}</span></h2>
+    <h2 style="margin-bottom: 2rem; font-weight: 300;">Good day, <span style="color: var(--primary); font-weight: 600;">{{ session('user_name', 'Employee') }}</span></h2>
 
     <div class="stat-grid">
         <div class="card stat-card delay-1 animate-slide-in">
