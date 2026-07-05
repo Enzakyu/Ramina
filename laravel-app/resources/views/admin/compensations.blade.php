@@ -7,12 +7,6 @@
     <h2 style="font-weight: 600; letter-spacing: -0.5px;">Reimbursement Requests</h2>
 </div>
 
-@if(session('success'))
-    <div class="alert alert-success animate-fade-in mb-4">
-        {{ session('success') }}
-    </div>
-@endif
-
 <div class="card animate-slide-in">
     <div class="card-body p-0">
         <table class="table" style="width: 100%; border-collapse: collapse;">
