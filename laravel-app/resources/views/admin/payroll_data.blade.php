@@ -7,12 +7,6 @@
     <h2 style="font-weight: 600; letter-spacing: -0.5px;">Adhoc Adjustments & KPIs</h2>
 </div>
 
-@if(session('success'))
-    <div class="alert alert-success animate-fade-in mb-4">
-        {{ session('success') }}
-    </div>
-@endif
-
 <div class="row">
     <!-- Adhoc Adjustments -->
     <div class="col-md-12 mb-4">

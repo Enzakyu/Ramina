@@ -75,7 +75,7 @@
                             <small style="color:var(--text-secondary)">{{ \Carbon\Carbon::parse($announcement['date'])->format('d M') }}</small>
                         </div>
                         <p style="margin-top:0.5rem; font-size:0.95rem; color:var(--text-secondary); line-height: 1.5;">
-                            {!! nl2br(e($announcement['content'])) !!}
+                            {!! $announcement['content'] !!}
                         </p>
                     </div>
                 @empty

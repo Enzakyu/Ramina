@@ -3,19 +3,12 @@
 @section('title', 'Company Announcements')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 style="font-weight: 600; letter-spacing: -0.5px;">Company Announcements</h2>
+<div class="d-flex justify-content-end mb-4">
     <button class="btn btn-primary" onclick="document.getElementById('addAnnouncementModal').style.display='flex'">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
         New Announcement
     </button>
 </div>
-
-@if(session('success'))
-    <div class="alert alert-success animate-fade-in mb-4">
-        {{ session('success') }}
-    </div>
-@endif
 
 <div class="row">
     @forelse($announcements as $announcement)
@@ -27,7 +20,7 @@
                 </div>
                 <hr>
                 <div style="color: var(--text-secondary); line-height: 1.6;">
-                    {!! nl2br(e($announcement['content'])) !!}
+                    {!! $announcement['content'] !!}
                 </div>
                 <div class="mt-4 text-end">
                     <form action="{{ route('admin.announcements.destroy', $announcement['id']) }}" method="POST" onsubmit="showLoading()">
