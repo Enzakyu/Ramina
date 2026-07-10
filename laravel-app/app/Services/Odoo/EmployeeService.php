@@ -290,4 +290,14 @@ class EmployeeService
 
         return $result;
     }
+
+    /**
+     * Archive (soft-delete) an employee record.
+     */
+    public function archiveEmployee(int $id): bool
+    {
+        $result = $this->odoo->write('hr.employee', [$id], ['active' => false]);
+        Log::info('Employee archived.', ['employee_id' => $id]);
+        return $result;
+    }
 }

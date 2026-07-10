@@ -42,7 +42,14 @@
                         <td>{{ is_array($emp['job_id']) ? $emp['job_id'][1] : '-' }}</td>
                         <td>{{ $emp['work_email'] ?? '-' }}</td>
                         <td>
-                            <a href="{{ route('admin.employees.show', $emp['id']) }}" class="btn btn-outline" style="padding: 0.25rem 0.75rem; font-size: 0.8rem;">View Profile</a>
+                            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                <a href="{{ route('admin.employees.show', $emp['id']) }}" class="btn btn-outline" style="padding: 0.25rem 0.75rem; font-size: 0.8rem;">View Profile</a>
+                                <form action="{{ route('admin.employees.destroy', $emp['id']) }}" method="POST" onsubmit="return confirm('Are you sure you want to remove this employee?');" style="margin: 0;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn" style="padding: 0.25rem 0.75rem; font-size: 0.8rem; background: rgba(239, 68, 68, 0.1); color: var(--danger); border: none;">Remove</button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     @empty

@@ -173,4 +173,17 @@ class EmployeeController extends Controller
             return back()->with('error', 'Failed to update employee: ' . $e->getMessage());
         }
     }
+
+    /**
+     * Archive (soft-delete) an employee record.
+     */
+    public function destroy(int $id)
+    {
+        try {
+            $this->employeeService->archiveEmployee($id);
+            return back()->with('success', 'Employee removed successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to remove employee: ' . $e->getMessage());
+        }
+    }
 }
